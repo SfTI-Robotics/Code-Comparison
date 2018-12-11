@@ -7,7 +7,8 @@ QUESTIONS?????
 2. replacing q-target with a, r, s' placeholders in modified file
 3. syntax for activation = relu
 4. stop_gradient: backpropagate without q-target
-5. 
+5. cost vs. loss
+
 
 
 """
