@@ -17,8 +17,10 @@ import gym
 import numpy as np
 import tensorflow as tf
 
+# create object class for learning algorithm
 class DQN:
     def _init_(self,n_feature,n_action):
+        # assign variables
         self.lr=0.01
         self.epsilon=0.9
         self.gamma=0.9
@@ -30,31 +32,38 @@ class DQN:
         self.memory=np.zeros((self.memory_size,n_feature * 2 + 2))
         
         self.sess=tf.Session()
+
+        # launch tensorflow session
         self.sess.run(tf.global_variables_initializer())
 
     def build_net(self):
-
-
+        # set up variables 
         self.state = tf.placeholder(tf.float32, shape = [None, self.n_feature], name = 'state')
         self.action = tf.placeholder(tf.int32, shape = [None, ], name = 'action')
         self.reward = tf.placeholder(tf.float32, shape = [None, ], name = 'reward')
         self.nextState = tf.placeholder(tf.float32, shape = [None, self.n_feature], name = 'nextState')
-
+        
+        # weight: generate random number from normally distributed samples 
         weight = tf.random_normal_initializer(0.,0.3)
+        # bias: generate constant value
         bias = tf.constant_initializer(0.1)
 
+        # evaluation network: create layers of 
         with tf.variable_scope('eval_net'):
             eval1 = tf.layers.dense(self.state, 20, activation = tf.nn.relu, kernel_initializer = weight, bias_initializer = bias, name='eval1')
             self.q_eval = tf.layers.dense(eval1, self.n_actions, activation = 'relu',kernel_initializer = weight, bias_initializer = bias, name='q_eval')
 
+        # target network
         with tf.variable_scope('target_net'):
             target1 = tf.layers.dense(self.nextState, 20, activation= 'relu',kernel_initializer = weight, bias_initializer = bias, name= 'target')
             self.q_next = tf.layers.dense(target1, self.n_actions, activation= 'relu',kernel_initializer = weight, bias_initializer = bias, name=)
 
+        # calculate q-target
         with tf.variable_scope('q_target'):
             q_target=self.r+self.gamma*tf.reduce_max(self.q_next, axis=1, name='Qmax_s_')
             self.q_target=tf.stop_gradient(q_target)
 
+        # calculate q-evaluate: 
         with tf.variable_scope('q_eval'):
 
             # tf.stack(): combine tensors into one tensor, 
