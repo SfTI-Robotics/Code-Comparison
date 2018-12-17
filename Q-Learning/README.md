@@ -20,3 +20,42 @@ Frozen Lake and Taxi do not use any encapsulation/abstraction due to the simple 
 Taxi had two sections one for training the model and one for testing. The training phase is where the agent is learning and creating a model with the optimal Q-values. The agent runs through the algorithm for 50000 episodes and selects actions based on an e-greedy policy. In the testing phase, the agent completes a further 100 episodes, however, it does not learn anymore (ie. doesn't update Q-values) and the actions are selected based on a greedy policy (choosing q values and hence best path for the Taxi to traverse).
 
 Whereas in FrozenLake and Cartpole they only do learning. The training section isn't needed, it's only used to see the result of learning.
+
+## In-depth comparison
+
+### General Code Format
+   
+1. import dependencies  
+2. initialise hyperparameters
+3. initalisation of Q table
+4. learning algorithm for training
+    - for every episode
+        - get start state
+        - for every step
+            - show rendered env (optional)
+            - choose action
+            - update Q table, rewards, state
+5. use trained model to play game (optional)
+
+### Parameters
+
+```
+# hyperparameters 
+episode_max = 50000
+steps_max = 99 #num of steps max in each episode
+
+learn_rate = 0.5 # alpha
+discount = 0.5   # gamma
+
+# exploration parameters
+exploration_rate = 1.0  # epsilon
+decay_rate = 0.01 #used to decrease epsilon
+```
+
+1. Number of episodes is set to a very large number so there is sufficient amount of training and exploration
+2. Number of steps is commonly 99, this is the maximum amount of steps the agent can take before the episode ends, regardless of if the terminal state is reached. 
+3. Learning rate (alpha) is used in the Bellman equation
+4. Discount is the gamma variable used in the Bellman equation
+5. Exploration rate (1 - epsilon) sets the e-greedy probability of choosing a random action
+6. Decay rate is used to slowly decrease the exploration rate so it exploits more towards the end 
+

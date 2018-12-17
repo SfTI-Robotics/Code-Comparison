@@ -23,14 +23,14 @@ env = gym.make('Taxi-v2')
 
 # hyperparameters 
 episode_max = 50000
-steps_max = 99
+steps_max = 99#num of steps max in each episode
 
-learn_rate = 0.5
-discount = 0.5
+learn_rate = 0.5 # alpha
+discount = 0.5   # gamma
 
 # exploration parameters
 exploration_rate = 1.0  # epsilon
-decay_rate = 0.01
+decay_rate = 0.01#used to decrease epsilon
 
 # initialise Q table
 Q_table = np.zeros((env.observation_space.n, env.action_space.n))

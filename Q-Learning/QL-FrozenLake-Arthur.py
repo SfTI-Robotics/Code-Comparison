@@ -8,10 +8,12 @@ env = gym.make('FrozenLake-v0')
 
 #Initialize table with all zeros
 Q = np.zeros([env.observation_space.n,env.action_space.n])
+
 # Set learning parameters
 lr = .8
 y = .95
 num_episodes = 2000
+
 #create lists to contain total rewards and steps per episode
 #jList = []
 rList = []
