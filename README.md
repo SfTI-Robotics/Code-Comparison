@@ -1,3 +1,3 @@
 # Gym
 
-test editing function in GitKraken
+Code Examples for OpenAI Gym environments
