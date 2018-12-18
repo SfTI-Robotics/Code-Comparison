@@ -188,10 +188,20 @@ Same as Taxi.
 
 ### Update Q-values
 
+```
+state_, reward, done, info = env.step(action)
 
+# update Q table using algorithm
+Q_table[state,action] += learn_rate * (reward + discount * (np.max(Q_table[state_, :]) - Q_table[state, action]))
+```
 
 
 
 time sleep : to prevent memory leak
 
-close environment 
+```
+
+state_, reward, done, info = env.step(action)
+
+# update Q table using algorithm
+Q_table[state,action] += learn_rate * (reward + discount * (np.max(Q_table[state_, :]) - Q_table[state, action]))

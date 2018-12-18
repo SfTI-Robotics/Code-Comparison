@@ -53,7 +53,14 @@ def simulate():
     learning_rate = get_learning_rate(0)
     explore_rate = get_explore_rate(0)
     discount_factor = 0.999  # since the world is unchanging
-
+if d == True:
+            os.system('clear')
+            env.render()
+            
+            print("Episode ended")
+            time.sleep(1)
+            
+            break
     num_streaks = 0
 
     for episode in range(NUM_EPISODES):
@@ -64,7 +71,14 @@ def simulate():
         # the initial state
         state_0 = state_to_bucket(obv)
 
-        for t in range(MAX_T):
+        for t in range(MAX_T):if d == True:
+            os.system('clear')
+            env.render()
+            
+            print("Episode ended")
+            time.sleep(1)
+            
+            break
             env.render()
 
             # Select an action
