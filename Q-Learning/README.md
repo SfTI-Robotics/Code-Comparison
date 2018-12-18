@@ -39,6 +39,14 @@ Whereas in FrozenLake and Cartpole they only do learning. The training section i
 
 ### Parameters
 
+1. Number of episodes is set to a very large number so there is sufficient amount of training and exploration
+2. Number of steps is commonly 99, this is the maximum amount of steps the agent can take before the episode ends, regardless of if the terminal state is reached. 
+3. Learning rate (alpha) is used in the Bellman equation
+4. Discount is the gamma variable used in the Bellman equation
+5. Exploration rate (1 - epsilon) sets the e-greedy probability of choosing a random action
+6. Decay rate is used to slowly decrease the exploration rate so it exploits more towards the end 
+   
+#### Taxi
 ```
 # hyperparameters 
 episode_max = 50000
@@ -52,10 +60,48 @@ exploration_rate = 1.0  # epsilon
 decay_rate = 0.01 #used to decrease epsilon
 ```
 
-1. Number of episodes is set to a very large number so there is sufficient amount of training and exploration
-2. Number of steps is commonly 99, this is the maximum amount of steps the agent can take before the episode ends, regardless of if the terminal state is reached. 
-3. Learning rate (alpha) is used in the Bellman equation
-4. Discount is the gamma variable used in the Bellman equation
-5. Exploration rate (1 - epsilon) sets the e-greedy probability of choosing a random action
-6. Decay rate is used to slowly decrease the exploration rate so it exploits more towards the end 
 
+#### Frozen Lake
+```
+# Set learning parameters
+lr = .8 # alpha
+y = .95 # gamma
+num_episodes = 2000
+decay_rate = 0.01 #used to decrease epsilon
+```
+
+A maximum steps variable isn't defined but rather hardcoded into the while loop. Its also doesn't have an exploration rate as doesn't use e-greedy.
+
+#### Cart Pole
+```
+## Defining the environment related constants
+
+# Number of discrete states (bucket) per state dimension
+NUM_BUCKETS = (1, 1, 6, 3)  # (x, x', theta, theta') 
+# Number of discrete actions
+NUM_ACTIONS = env.action_space.n # (left, right)
+# Bounds for each discrete state
+STATE_BOUNDS = list(zip(env.observation_space.low, env.observation_space.high))
+# Manually setting bounds (needed for the x_dot and theta_dot)
+#STATE_BOUNDS[0] = [STATE_BOUNDS[0][0]/2, STATE_BOUNDS[0][1]/2]
+STATE_BOUNDS[1] = [-0.5, 0.5]
+#STATE_BOUNDS[2] = [STATE_BOUNDS[2][0]/2, STATE_BOUNDS[2][0]/2]
+STATE_BOUNDS[3] = [-math.radians(50), math.radians(50)]
+
+## Learning related constants
+MIN_EXPLORE_RATE = 0.01
+MIN_LEARNING_RATE = 0.2
+
+# Defining the simulation related constants
+NUM_EPISODES = 1000
+MAX_T = 250
+STREAK_TO_END = 120
+SOLVED_T = 199
+DEBUG_MODE = False
+ENABLE_UPLOAD = False
+```
+
+The states are split into buckets in order to make them discrete, because Q Learning algorithms cannot be used with continuous states???
+`env.action_space.n` returns the length of the action space ,how many actions you can take in this case it would be 2 either left or right.
+
+list zip 
