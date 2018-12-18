@@ -194,14 +194,45 @@ state_, reward, done, info = env.step(action)
 # update Q table using algorithm
 Q_table[state,action] += learn_rate * (reward + discount * (np.max(Q_table[state_, :]) - Q_table[state, action]))
 ```
+All three code scripts use the same Bellman equation and gym `step()` function.
 
+### Finish episode
 
-
-time sleep : to prevent memory leak
+#### Taxi
 
 ```
+if done:
+    break
+```
 
-state_, reward, done, info = env.step(action)
+Stops the episode when terminal state is reached
+#### Frozen 
+```
+if d == True:
+    os.system('clear')
+    env.render()
+    
+    print("Episode ended")
+    time.sleep(1)
+    
+    break
+```
 
-# update Q table using algorithm
-Q_table[state,action] += learn_rate * (reward + discount * (np.max(Q_table[state_, :]) - Q_table[state, action]))
+This is essentially the same as frozen lake except time sleep is used to prevent memory leak.
+
+#### Cartpole
+```
+if done:
+    print("Episode %d finished after %f time steps" % (episode, t))
+
+    if t >= SOLVED_T:
+        num_streaks += 1
+    else:
+        num_streaks = 0
+    break
+```
+Checks if the episode was completed within the number of steps (ie. streak) and increments the number of streaks.
+
+
+### Cumulative Rewards
+The final reward is a normalised sum of the total rewards from each episode: `sum(cumulative_return)/episode_num`.
