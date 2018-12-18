@@ -118,3 +118,80 @@ ENABLE_UPLOAD = False
 
 - solved t = 199 because it is the least amount of time-steps for the episode to end (ie. pole goes out of bounds)
 - a gamma variable isn't set here but rather set later in a function. Also we don't have  a decay rate set up here as this person creates a function that uses logarithmic operation to decrease epsilon later in the code.
+
+### Q Table
+
+#### Taxi
+
+```
+Q_table = np.zeros((env.observation_space.n, env.action_space.n))
+```
+#### Frozen 
+
+Is the same as taxi
+
+#### Cartpole
+```
+q_table = np.zeros(NUM_BUCKETS + (NUM_ACTIONS, ))
+```
+The `+` sign acts as a comma, forming state, action pairs. 
+
+### Getting states
+
+`state = env.reset()` returns the initial state.
+In Cartpole, the continuous state is converted to a discrete state.
+
+### Choosing actions
+
+#### Taxi
+```
+xx_tradeoff = random.uniform(0, 1)
+
+        if xx_tradeoff > exploration_rate:
+            # exploitation
+            action = np.argmax(Q_table[state,:])
+        else:
+            # exploration
+            # [OpenAI Gym] sample: picking one value from array of values
+            action = env.action_space.sample()
+```
+
+xx_tradeoff is a number between 0 and 1 and we use that number implement e-greedy. The exploration rate decays as the number of episodes increases. At the start, the algorithm does more exploration, then it gradually does more exploits to try and find the optimal policy.  
+
+#### Frozen Lake
+```
+#Choose an action by greedily (with noise) picking from Q table
+# noise is a random initialiser for Q-table
+a = np.argmax(Q[s,:] + np.random.randn(1,env.action_space.n)*(1./(i+1)))
+```
+using noise is a searching method.
+In order for the initial Q-values to be non-zero, a random number is added on. This random number will decay as the number of episodes increases, due to the scaling factor(1/i+1). 
+
+The selection of the next action is based on a greedy policy in the later episodes.
+
+
+#### Cartpole
+```
+action = select_action(state_0, explore_rate)
+
+
+def select_action(state, explore_rate):
+    # Select a random action
+    if random.random() < explore_rate:
+        action = env.action_space.sample()
+    # Select the action with the highest q
+    else:
+        action = np.argmax(q_table[state])
+    return action
+ ```
+Same as Taxi.
+
+### Update Q-values
+
+
+
+
+
+time sleep : to prevent memory leak
+
+close environment 
