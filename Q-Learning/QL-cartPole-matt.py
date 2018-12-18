@@ -116,13 +116,7 @@ def simulate():
         explore_rate = get_explore_rate(episode)
         learning_rate = get_learning_rate(episode)
 
-    # if ENABLE_UPLOAD:
-    #     env.monitor.close()
-    #     gym.upload('/tmp/QL-cartPole-v2',
-    #                api_key='sk_93AMQvdmReWCi8pdL4m6Q')
-
-
-def select_action(state, explore_rate):
+  def select_action(state, explore_rate):
     # Select a random action
     if random.random() < explore_rate:
         action = env.action_space.sample()

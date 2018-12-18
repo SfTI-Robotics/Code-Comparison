@@ -78,15 +78,19 @@ A maximum steps variable isn't defined but rather hardcoded into the while loop.
 
 # Number of discrete states (bucket) per state dimension
 NUM_BUCKETS = (1, 1, 6, 3)  # (x, x', theta, theta') 
+
 # Number of discrete actions
 NUM_ACTIONS = env.action_space.n # (left, right)
+
 # Bounds for each discrete state
 STATE_BOUNDS = list(zip(env.observation_space.low, env.observation_space.high))
+
 # Manually setting bounds (needed for the x_dot and theta_dot)
-#STATE_BOUNDS[0] = [STATE_BOUNDS[0][0]/2, STATE_BOUNDS[0][1]/2]
-STATE_BOUNDS[1] = [-0.5, 0.5]
-#STATE_BOUNDS[2] = [STATE_BOUNDS[2][0]/2, STATE_BOUNDS[2][0]/2]
-STATE_BOUNDS[3] = [-math.radians(50), math.radians(50)]
+
+# STATE_BOUNDS[0] = [STATE_BOUNDS[0][0]/2, STATE_BOUNDS[0][1]/2]    # x
+STATE_BOUNDS[1] = [-0.5, 0.5]                                       # x dot
+# STATE_BOUNDS[2] = [STATE_BOUNDS[2][0]/2, STATE_BOUNDS[2][0]/2]    # theta
+STATE_BOUNDS[3] = [-math.radians(50), math.radians(50)]             # theta dot
 
 ## Learning related constants
 MIN_EXPLORE_RATE = 0.01
@@ -94,14 +98,23 @@ MIN_LEARNING_RATE = 0.2
 
 # Defining the simulation related constants
 NUM_EPISODES = 1000
-MAX_T = 250
+MAX_T = 250             # time-steps
 STREAK_TO_END = 120
 SOLVED_T = 199
-DEBUG_MODE = False
+
+# ignore these 2 lines its for printing
+DEBUG_MODE = False 
 ENABLE_UPLOAD = False
 ```
 
-The states are split into buckets in order to make them discrete, because Q Learning algorithms cannot be used with continuous states???
-`env.action_space.n` returns the length of the action space ,how many actions you can take in this case it would be 2 either left or right.
+- The states are split into buckets in order to make them discrete, because Q Learning algorithms cannot be used with continuous states???
+- `env.action_space.n` returns the length of the action space ,how many actions you can take in this case it would be 2 either left or right.
 
-list zip 
+- `list()`, `zip()`: see python syntax in website but they create a list of pairs for each state (x, xDOT, theta,  thetaDOT) showing the lower and upper bounds that can be reached before an episode ends.
+
+- state bounds for x and theta are already set by the environment, so only need to manually set xDOT and thetaDOT.
+
+- streak totals the number of times it reaches the terminal state
+
+- solved t = 199 because it is the least amount of time-steps for the episode to end (ie. pole goes out of bounds)
+- a gamma variable isn't set here but rather set later in a function. Also we don't have  a decay rate set up here as this person creates a function that uses logarithmic operation to decrease epsilon later in the code.
