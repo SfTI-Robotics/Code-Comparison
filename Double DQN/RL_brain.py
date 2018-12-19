@@ -111,13 +111,14 @@ class DoubleDQN:
         actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
         action = np.argmax(actions_value)
 
-        # # why does this exist???
-        # if not hasattr(self, 'q'):  # record action value it gets
-        #     self.q = []
-        #     self.running_q = 0
-        # # what is this equation ??
-        # self.running_q = self.running_q*0.99 + 0.01 * np.max(actions_value)
-        # self.q.append(self.running_q)
+        # used in the run script to plot the Q-values
+        if not hasattr(self, 'q'):  # record action value it gets
+            self.q = []
+            self.running_q = 0
+        # running_q is the cumulative Q-value
+        # update by using 99% cumulative Q and 1% Q-value from current Q-value
+        self.running_q = self.running_q*0.99 + 0.01 * np.max(actions_value)
+        self.q.append(self.running_q)
 
         if np.random.uniform() > self.epsilon:  # choosing action
             action = np.random.randint(0, self.n_actions)
