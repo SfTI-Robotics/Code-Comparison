@@ -185,7 +185,7 @@ The memory is initialised as an array of zeros with rows being the memory size (
 #### Building model
 
 ##### Greg - Keras
-Using Keras, the 
+
 ```
 # create neural network by stacking the layers in a linear order
 self.model = Sequential()
@@ -195,13 +195,27 @@ self.model.add(Dense(self.action_space, activation="linear"))
 # if weights are not specified, default is sample weight
 self.model.compile(loss="mse", optimizer=Adam(lr=LEARNING_RATE))
 ```
+Using Keras, the model is initialised as a sequence of densely-connected layers.To see what exactly the dense functio does see documentation.
+This gives us a neural network of 4 layers. The first layer consists of 4 input nodes(the 4 observations) then 2 hidden layers both with 24 nodes lasty the output layer with two nodes that outputs which action to take left or right. Last line simply compiles the all the layers into one model that uses the [adam optimiser](https://machinelearningmastery.com/adam-optimization-algorithm-for-deep-learning/) to estimate values and calulates loss by mean square error this is when you square the loss and then take the average.
 
 ##### CN Blogs - Keras
 
-
+```
+def _createModel(self):
+    model = Sequential()
+    model.add(Dense(output_dim=64, activation='relu', input_dim=stateCnt))
+    model.add(Dense(output_dim=actionCnt, activation='linear'))
+    opt = RMSprop(lr=0.00025)
+    model.compile(loss='mse', optimizer=opt)
+    return model
+```
+The model is created as a function within the DQN algorithm class and is called in the class constructor.This is extremely similar to gregs example and this is because keras is a simple package with not alot of room for variation and customisation. But the number of layers here can be changed with only 3 layers input(4 nodes) and a hidden layer with 64 nodes and an output layer. They also uses a different optimiser [RMSProp](https://www.coursera.org/lecture/deep-neural-network/rmsprop-BhJlm)
 
 ##### Morvan - Tensorflow
+Using Tensorflow, 2 networks are created, the evaluation and target. In the evaluation network, a graph is initialised for the state and Q-target, which hold the parameters used for its computation. The state graph has the shape = `[None, self.n_features]` and Q-target graph has the shape = `[None, self.n_actions]`.
 
+In the scope `'eval_net'`, the weight and bias is initialised randomly. The first layer in the network w1 and b1 are created using the `get_variable()` function. The matrix multiplication of the state and w1 
+A rectified linear unit (relu) layer is created with the matrix multiplication of the state and w1 
 
 ### Memory/Store Transition 
 
