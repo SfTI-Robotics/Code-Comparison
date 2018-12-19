@@ -43,7 +43,9 @@ def train(RL):
     observation = env.reset()
     while True:
         # if total_steps - MEMORY_SIZE > 8000: env.render()
+        env.render()
 
+        # action 
         action = RL.choose_action(observation)
 
         f_action = (action-(ACTION_SPACE-1)/2)/((ACTION_SPACE-1)/4)   # convert to [-2 ~ 2] float actions

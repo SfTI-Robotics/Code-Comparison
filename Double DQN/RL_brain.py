@@ -47,6 +47,8 @@ class DoubleDQN:
         self.learn_step_counter = 0
         self.memory = np.zeros((self.memory_size, n_features*2+2))
         self._build_net()
+
+        # initialising collections for parameters 
         t_params = tf.get_collection('target_net_params')
         e_params = tf.get_collection('eval_net_params')
         self.replace_target_op = [tf.assign(t, e) for t, e in zip(t_params, e_params)]
@@ -105,14 +107,17 @@ class DoubleDQN:
 
     def choose_action(self, observation):
         observation = observation[np.newaxis, :]
+        # choose action based on Q-value from evaluation network
         actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
         action = np.argmax(actions_value)
 
-        if not hasattr(self, 'q'):  # record action value it gets
-            self.q = []
-            self.running_q = 0
-        self.running_q = self.running_q*0.99 + 0.01 * np.max(actions_value)
-        self.q.append(self.running_q)
+        # # why does this exist???
+        # if not hasattr(self, 'q'):  # record action value it gets
+        #     self.q = []
+        #     self.running_q = 0
+        # # what is this equation ??
+        # self.running_q = self.running_q*0.99 + 0.01 * np.max(actions_value)
+        # self.q.append(self.running_q)
 
         if np.random.uniform() > self.epsilon:  # choosing action
             action = np.random.randint(0, self.n_actions)
@@ -129,6 +134,7 @@ class DoubleDQN:
             sample_index = np.random.choice(self.memory_counter, size=self.batch_size)
         batch_memory = self.memory[sample_index, :]
 
+
         q_next, q_eval4next = self.sess.run(
             [self.q_next, self.q_eval],
             feed_dict={self.s_: batch_memory[:, -self.n_features:],    # next observation
@@ -142,11 +148,13 @@ class DoubleDQN:
         reward = batch_memory[:, self.n_features + 1]
 
         if self.double_q:
-            max_act4next = np.argmax(q_eval4next, axis=1)        # the action that brings the highest value is evaluated by q_eval
-            selected_q_next = q_next[batch_index, max_act4next]  # Double DQN, select q_next depending on above actions
+            # decoupling the action taken and the Q-value selected 
+            max_act4next = np.argmax(q_eval4next, axis=1)        # the action that brings the highest value is evaluated by q_eval(Evaluator Network Q-Value)
+            selected_q_next = q_next[batch_index, max_act4next]  # Double DQN, select q_next(Target Network Q - value) depending on above actions
         else:
             selected_q_next = np.max(q_next, axis=1)    # the natural DQN
 
+        # Bellman equation
         q_target[batch_index, eval_act_index] = reward + self.gamma * selected_q_next
 
         _, self.cost = self.sess.run([self._train_op, self.loss],
