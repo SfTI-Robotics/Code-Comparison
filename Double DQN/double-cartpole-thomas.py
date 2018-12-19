@@ -18,7 +18,7 @@ EPISODES = 300
 class DoubleDQNAgent:
     def __init__(self, state_size, action_size):
         # if you want to see Cartpole learning, then change to True
-        self.render = False
+        self.render = True
         self.load_model = False
         # get size of state and action
         self.state_size = state_size
@@ -44,7 +44,7 @@ class DoubleDQNAgent:
 
         # use set weights
         if self.load_model:
-            self.model.load_weights("./save_model/cartpole_ddqn.h5")
+            self.model.load_weights("./cartpole_ddqn.h5")
 
     # approximate Q function using Neural Network
     # state is input and Q Value of each action is output of network
@@ -178,12 +178,13 @@ if __name__ == "__main__":
                 # every episode update the target model to be same with model
                 agent.update_target_model()
 
+                print("score = ", score )
                 # every episode, plot the play time
                 score = score if score == 500 else score + 100
                 scores.append(score)
                 episodes.append(e)
                 pylab.plot(episodes, scores, 'b')
-                pylab.savefig("./save_graph/cartpole_ddqn.png")
+                # pylab.savefig("./Pictures/cartpole_ddqn.png")
                 print("episode:", e, "  score:", score, "  memory length:",
                       len(agent.memory), "  epsilon:", agent.epsilon)
 
@@ -194,4 +195,4 @@ if __name__ == "__main__":
 
         # save the model
         if e % 50 == 0:
-            agent.model.save_weights("./save_model/cartpole_ddqn.h5")
+            agent.model.save_weights("./cartpole_ddqn.h5")
