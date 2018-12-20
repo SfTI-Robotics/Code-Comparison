@@ -3,14 +3,16 @@
 
 Code used:
 
-### Greg - Keras
+### Keras
 
-[Article](https://towardsdatascience.com/cartpole-introduction-to-reinforcement-learning-ed0eb5b58288)|[Code](https://github.com/gsurma/cartpole)
+Greg  [Article](https://towardsdatascience.com/cartpole-introduction-to-reinforcement-learning-ed0eb5b58288) | [Code](https://github.com/gsurma/cartpole)
 
-### Morvan - Tensorflow
+Jaromír [Article](https://jaromiru.com/2016/10/03/lets-make-a-dqn-implementation/) | [Code](https://github.com/jaromiru/AI-blog/blob/master/CartPole-basic.py)
+### Tensorflow
+
+Morvan  | [Code](https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/tree/master/contents/5_Deep_Q_Network)
 
 
-### CN Blogs - Keras
 
 ## Overall Differences
 
@@ -100,7 +102,7 @@ Memory size is used to set the maximum length of the memory array which stores t
 
 Batch size is used for experience replay. It determines the sample size of the stored transitions used in the learning algorithm. 
 
-#### CN Blogs - Keras
+#### Jaromír - Keras
 Same as Greg - Keras.
 
 #### Morvan - Tensorflow
@@ -136,7 +138,7 @@ replace_target_iter is used so that after every x iterations the target paramete
 
 Here he assigns action space to self and also intialises the expolration rate at its max value. Then he initalises his memory and neural network using keras' model and layers package.
 
-#### CN Blogs - Keras
+#### Jaromír - Keras
 
 The init functions assigns the state and action as a variable of the class/object. The neural network model is also initialised by calling the class function `_createModel()`.
 #### Morvan - Tensorflow
@@ -169,7 +171,7 @@ self.memory = deque(maxlen=MEMORY_SIZE)
 ```
 The memory is initialised as a deque data structure with a fixed length.
 
-##### CN Blogs - Keras
+##### Jaromír - Keras
 
 He initialises the memory under a different class from the brain
 
@@ -198,7 +200,7 @@ self.model.compile(loss="mse", optimizer=Adam(lr=LEARNING_RATE))
 Using Keras, the model is initialised as a sequence of densely-connected layers.To see what exactly the dense functio does see documentation.
 This gives us a neural network of 4 layers. The first layer consists of 4 input nodes(the 4 observations) then 2 hidden layers both with 24 nodes lasty the output layer with two nodes that outputs which action to take left or right. Last line simply compiles the all the layers into one model that uses the [adam optimiser](https://machinelearningmastery.com/adam-optimization-algorithm-for-deep-learning/) to estimate values and calulates loss by mean square error this is when you square the loss and then take the average.
 
-##### CN Blogs - Keras
+##### Jaromír - Keras
 
 ```
 def _createModel(self):
