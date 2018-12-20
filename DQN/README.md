@@ -17,22 +17,17 @@ Morvan  | [Code](https://github.com/MorvanZhou/Reinforcement-learning-with-tenso
 ## Overall Differences
 
 ### Diff 1: Keras vs. Tensorflow
-Keras is a package based upon Tensorflow. It allows for much easier implementation but also has less flexibility/customisation than Tensorflow.
+Keras is a package based upon Tensorflow. It allows for much easier implementation but also has less flexibility/customisation than Tensorflow. A layout of how Tensorflow is used to program a DQN: 
 
-### Diff 2
-
- 
-
-{ Format }
-
-[constructor]
+**[constructor]**
 1. initialise instance variables
 2. call build net function
 3. get parameters
 4. instantiate session
 5. launch session
 
-[build network]
+**[build network]**
+
 **evaluation net**
 1. initialise placeholders for state and q-target
 2. initialise weight and bias paramters
@@ -41,46 +36,51 @@ Keras is a package based upon Tensorflow. It allows for much easier implementati
     2. set up relu (recitified linear unit) neural network on current state
 
      **layer 2** 
-    1. get weight and bias variable using get_variable()
-    2. calculate q-evaluation
+    3. get weight and bias variable using get_variable()
+    4. calculate q-evaluation
 
 **loss**
+
  find mean of error squared
 
  **train**
+
  minimise loss using RMS Prop optimiser
 
 **target network**
 1. set up collection for target
- **layer 1**
+   
+    **layer 1**
+
     1. get weight and bias variable using get_variable()
     2. set up relu (recitified linear unit) neural network on next state
- **layer 2**
+    
+    **layer 2**
+
     1. get weight and bias variable using get_variable()
     2. calculate next q-value 
 
-[store transition]
+**[store transition]**
 1. if 'memory counter' does not exist
         create this variable
 2. store transition <s, a, r, s'> in horizontal stack
 3. replace old memory with new memory
 4. increment counter
 
-[choose action]
+**[choose action]**
 1. add new dimension to observations
 2. if random num < e-greedy
         choose action greedily, exploit
     else 
         choose action randomly, explore
 
-[learn]
+**[learn]**
 1. replace target parameters every 300 iterations
 2. randomly sample transition history through 
 3. find cost 
 4. increase epsilon
 
-[plot graph]
-
+**[plot graph]**
 
 ## In Depth Comparison
 
