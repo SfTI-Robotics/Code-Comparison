@@ -12,8 +12,6 @@ Jaromír [Article](https://jaromiru.com/2016/10/03/lets-make-a-dqn-implementatio
 
 Morvan  | [Code](https://github.com/MorvanZhou/Reinforcement-learning-with-tensorflow/tree/master/contents/5_Deep_Q_Network)
 
-
-
 ## Overall Differences
 
 ### Diff 1: Keras vs. Tensorflow
