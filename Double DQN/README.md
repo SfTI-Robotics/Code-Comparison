@@ -6,6 +6,12 @@ Pendulum | [Code](https://github.com/MorvanZhou/Reinforcement-learning-with-tens
 
 
 ## Overall differences
+2 types
+1)
+
+behavioural network -> behaviour then sends to target
+target chooses q value
+
 
 ### Diff 1 : Keras vs Tensorflow
 Using Keras simplifies the computation set up process the Keras functions combine multiple Tensorflow functions into one. 
@@ -16,8 +22,6 @@ More functions to avoid repetition of code.
 ## in depth comparison
 
 ### Learning algorithm 
--how memory is set up
--build model
 
 #### Memory
 
@@ -39,10 +43,6 @@ The target and evaluation (behavioural) model is built similar to DQN.
 ### Update target model
 We update the target model more frequently instead of behaviour(dqns) 
 
-Q?
--fixed q value: choose policy based on fixed value instead of moving value 
--frequency of updating the behavioural and target updates
-
 #### Cart Pole
 
 ```
@@ -50,7 +50,7 @@ def update_target_model(self):
         self.target_model.set_weights(self.model.get_weights())
 
 ```
-Using the Keras function `set_weights()`, the weights are updated in the .h5 file. This is updated after every episode 
+Using the Keras function `set_weights()`, the weights are updated in the .h5 file. This is updated after every episode It causes overestimation, updating alot at beginning you get alot of bad q values but do get better towards end.This uses more computational power.
 
 #### Pendulum 
 ```
@@ -64,14 +64,16 @@ if self.learn_step_counter % self.replace_target_iter == 0:
             print('\ntarget_params_replaced\n')
 ```
 The parameters of the target model are updated through using a `replace_target_op` function. 
+Initially epsidoe finishes very quickly but as it improves it updates over fewer episodes.This isnt required for ddqns but is an optimisation.
 
 ### Choosing Action
+The action is chosen based on the behavioural model using the target Q-value.
 #### Cart Pole
 
 
 #### Pendulum 
 
-### Learning from experience 
+### Experience Replay
 #### Cart Pole
 
 
