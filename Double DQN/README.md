@@ -47,7 +47,7 @@ Set weights are used instead of randomised weights.
 
 
 ##### Pendulum 
-Morvan uses the n_features*2+2 again in this code as it quite flexible. You times two for next state then plus two for reward and action. These will always be need no matter what environment.
+Morvan uses the `n_features*2+2` again in this code as it quite flexible. You times two for next state then plus two for reward and action. This forms the eperience transition sample.
 
 
 ### Building models
@@ -105,24 +105,44 @@ The computational graph calculates the Q-value from the evaluation network inste
 ### Experience Replay and update Q-value
 #### Cart Pole
 ```
-# get action for the current state and go one step in environment
-action = agent.get_action(state)
-next_state, reward, done, info = env.step(action)
-next_state = np.reshape(next_state, [1, state_size])
+def train_model(self):
+       
+        # array of current Q-value, input is current state 
+        target = self.model.predict(update_input)
 
-# if an action make the episode end, then gives penalty of -100
-reward = reward if not done or score == 499 else -100
+        # an array of next Q-values, input next state
+        target_next = self.model.predict(update_target)
 
-# save the sample <s, a, r, s'> to the replay memory
-agent.append_sample(state, action, reward, next_state, done)
+        # an array of Q-values 
+        #fixed q target network
+        #target val is when the target model is updated to become the evaluator model
+        # input is next state
+        target_val = self.target_model.predict(update_target)
 
-# every time step do the training
-agent.train_model()
-score += reward
-state = next_state
+        for i in range(self.batch_size):
+            # like Q Learning, get maximum Q value at s'
+            # But from target model
+            if done[i]:
+                target[i][action[i]] = reward[i]
+            else:
+                # the key point of Double DQN
+                # selection of action is from model
+                # update is from target model
+                # decoupling
+                a = np.argmax(target_next[i])
+                # Bellman equation
+                #q value only stored ine target network not e
+                target[i][action[i]] = reward[i] + self.discount_factor * (
+                    target_val[i][a])
+
+        # make minibatch which includes target q value and predicted q value
+        # and do the model fit!
+        # calculates loss and does optimisation 
+        self.model.fit(update_input, target, batch_size=self.batch_size,
+                       epochs=1, verbose=0)
+
 ```
-The transition samples are stored by appending them in to the memory deque. 
-
+There's 3 q values caluculated in this the first two is q and q' using the behavioural network(being feed minibatches).Then we use the target network get the q value from target network. For each batch the q value  is updated based on the q value from the target  network run through the bellman equation but the action a is chosen using q' in behavioural network.Last;y the model is fitted using target network(needs to evaluate policy in target as well).
 #### Pendulum 
 ```
 # select random experience
@@ -149,7 +169,7 @@ reward = batch_memory[:, self.n_features + 1]
 if self.double_q:
         # decoupling the action taken and the Q-value selected 
         max_act4next = np.argmax(q_eval4next, axis=1)        # the action that brings the highest value is evaluated by q_eval(Evaluator Network Q-Value)
-        selected_q_next = q_next[batch_index, max_act4next]  # Double DQN, select q_next(Target Network Q - value) depending on above actions
+        selected_q_next = q_next[batch_index, max_act4next]  # Double DQN, select q_next(Target Network Q-value) depending on above actions
 else:
         selected_q_next = np.max(q_next, axis=1)    # the natural DQN
 
@@ -161,3 +181,4 @@ _, self.cost = self.sess.run([self._train_op, self.loss],
                                         self.q_target: q_target})
 self.cost_his.append(self.cost)
 ```
+The Q-values are updated by using the behavioural network to select an action. The Q-value from the target network (`selected_q_next`) is used in the Bellman equation, changing the behavioural Q-value (`q_target`) and then is stored in the target network.

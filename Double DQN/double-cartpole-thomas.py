@@ -102,7 +102,7 @@ class DoubleDQNAgent:
 
         # behaviour choose action, target model determins Q-value based action, 
         # target model updates behavioural Q-value
-        #                    
+        #  self.model.predict(update_input)                  
 
         # array of current Q-value, input is current state 
         target = self.model.predict(update_input)
