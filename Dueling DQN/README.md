@@ -2,7 +2,8 @@
 
 Cart Pole | [Code]()
 
-Pendulum | [Code]()
+Doom [Article](https://medium.freecodecamp.org/improvements-in-deep-q-learning-dueling-double-dqn-prioritized-experience-replay-and-fixed-58b130cc5682)
+ | [Code](https://gist.github.com/simoninithomas/d6adc6edb0a7f37d6323a5e3d2ab72ec#file-dueling-deep-q-learning-with-doom-double-dqns-and-prioritized-experience-replay-ipynb)
 
 
 ## Overall differences
@@ -40,6 +41,7 @@ action_size = game.get_available_buttons_size()
 
 ### Memory
 #### Frames
+Only every 4 frames is considered
 We use deque to stack the frames every episode.First apending the frame on the deque and then stack the array of frames onto eachother(4 dimensions). If full remove the oldest one(smalest q values and least reliable)
 
 ## DDDQN Algorithm
