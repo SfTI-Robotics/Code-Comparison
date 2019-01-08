@@ -77,7 +77,7 @@ class DNN:
 #-------------------------------------------------------------------------------
             with tf.name_scope("Output"):
                 out = tf.add(value, tf.subtract(advantage,
-                tf.reduce_mean(advantage, axis=1, keep_dims=True)))
+                tf.reduce_mean(advantage, axis=1, keepdims=True)))
                 tf.summary.histogram('Output', out)
             return out
 
@@ -418,7 +418,7 @@ def run():
         episode_reward = 0.0
         current_episode += 1
         for t in range(MAX_TIMESTEPS):
-            env.render()
+            # env.render()
             action = dqn.select_action(observation)
             new_observation, reward, done, info = env.step(action)
             episode_reward += reward
@@ -428,12 +428,12 @@ def run():
             observation = new_observation
             dqn.train_with_batch(summary=False)
             if done:
-                print "Episode ", episode
-                print "Finished after %s timesteps." % t
-                print "Reward this episode: %s" % episode_reward
+                print( "Episode ", episode)
+                print( "Finished after %s timesteps." % t)
+                print( "Reward this episode: %s" % episode_reward)
                 last_100.append(episode_reward)
-                print "Avg Reward last 100 episodes: ", np.mean(last_100)
-                print "RND Action: ", rnd_action_prob
+                print( "Avg Reward last 100 episodes: ", np.mean(last_100))
+                print( "RND Action: ", rnd_action_prob)
                 break
         #decrease random probability
         if rnd_action_prob >= RND_MIN: rnd_action_prob -= RND_DECREASE
