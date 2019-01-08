@@ -47,7 +47,7 @@ We have 4 channels because of the 4 frames stacked ont top of eachother.
 
 ### Memory
 #### Frames
-Only every 4 frames is considered
+Only every 4 frames is considered because having only 1 frame doesn't allow our agent to decide the motion of the objects in the game
 
 
 We use deque to stack the frames every episode.First apending the frame on the deque and then stack the array of frames onto eachother(4 dimensions). 
@@ -67,7 +67,7 @@ Each time we have a new state deque removes the next state frames and first.
 Uses tensorflow .
 Has 4placeholders that will be used later on.
 
-### Processing Images
+### Conv NN
 So it uses 3 convulutional layers. Each one first using the con2d function to split the frame into parts eg:player, victims etc... 
 
 then we use elu to scale it down
@@ -76,10 +76,6 @@ then we use elu to scale it down
 
 Here we build two NN one for the value function and the second advantage function.The inputs for both are the flattened processed layers discussed above.Then the second layers for each take the previous layer and give the output V(s) is the reward number and advantage is the action to take.
 
-### Q value
-```
- self.Q = tf.reduce_sum(tf.multiply(self.output, self.actions_), axis=1)
-```
 
 ## Sumtrees
 Binary Trees which have a property that the children nodes have to add to form the parent node.
@@ -111,6 +107,7 @@ max_priority = np.max(self.tree.tree[-self.tree.capacity:])
 
 ## Learning
 
+
 ## Action Choosing
 ```
 def predict_action(explore_start, explore_stop, decay_rate, decay_step, state, actions):
@@ -137,7 +134,7 @@ def predict_action(explore_start, explore_stop, decay_rate, decay_step, state, a
                 
     return action, explore_probability
 ```
-
+First we randomise a number then we use improved epsilon greedy strategy then use the same explortion/explitation
 ## Training
 
 
