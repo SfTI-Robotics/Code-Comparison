@@ -10,3 +10,4 @@ Also when you write your own code stick to the basics and worry most about reada
 - Deep Q Networks (DQN)
 - Double DQN
 - Dueling DQN
+- Prioritised Experience Replay
