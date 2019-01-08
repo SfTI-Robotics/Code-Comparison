@@ -84,6 +84,7 @@ Here we build two NN one for the value function and the second advantage functio
 ## Sumtrees
 Binary Trees which have a property that the children nodes have to add to form the parent node.
 
+They store the priority values of the experience transitions. 
 
 ## Memory
 

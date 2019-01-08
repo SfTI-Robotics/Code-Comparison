@@ -111,7 +111,7 @@ def preprocess_frame(frame):
 # <img src="https://raw.githubusercontent.com/simoninithomas/Deep_reinforcement_learning_Course/master/DQN/Space%20Invaders/assets/stack_frames.png" alt="stack">
 # - If we're done, **we create a new stack with 4 new frames (because we are in a new episode)**.
 
-# In[ ]:
+ 
 
 
 stack_size = 4 # We stack 4 frames
@@ -152,7 +152,7 @@ def stack_frames(stacked_frames, state, is_new_episode):
 # - First, you begin by defining the neural networks hyperparameters when you implement the model.
 # - Then, you'll add the training hyperparameters when you implement the training algorithm.
 
-# In[ ]:
+ 
 
 
 ### MODEL HYPERPARAMETERS
@@ -200,7 +200,7 @@ episode_render = False
 # - Finally an agregating layer
 # - It outputs a Q value for each actions
 
-# In[ ]:
+ 
 
 
 class DDDQNNet:
@@ -322,7 +322,7 @@ class DDDQNNet:
             self.optimizer = tf.train.RMSPropOptimizer(self.learning_rate).minimize(self.loss)
 
 
-# In[ ]:
+ 
 
 
 # Reset the graph
@@ -365,7 +365,7 @@ TargetNetwork = DDDQNNet(state_size, action_size, learning_rate, name="TargetNet
 #          - Then, we calculate IS weights for each minibatch element
 #     - **def update_batch**: update the priorities on the tree
 
-# In[ ]:
+ 
 
 
 class SumTree(object):
@@ -611,7 +611,7 @@ class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
 
 # Here we'll **deal with the empty memory problem**: we pre-populate our memory by taking random actions and storing the experience.
 
-# In[ ]:
+ 
 
 
 # Instantiate memory
@@ -673,7 +673,7 @@ for i in range(pretrain_length):
 # For more information about tensorboard, please watch this <a href="https://www.youtube.com/embed/eBbEDRsCmv4">excellent 30min tutorial</a> <br><br>
 # To launch tensorboard : `tensorboard --logdir=/tensorboard/dddqn/1`
 
-# In[ ]:
+ 
 
 
 # Setup TensorBoard Writer
@@ -715,7 +715,7 @@ write_op = tf.summary.merge_all()
 # 
 #     
 
-# In[ ]:
+ 
 
 
 """
@@ -746,10 +746,6 @@ def predict_action(explore_start, explore_stop, decay_rate, decay_step, state, a
                 
     return action, explore_probability
 
-
-# In[ ]:
-
-
 # This function helps us to copy one set of variables to another
 # In our case we use it when we want to copy the parameters of DQN to Target_network
 # Thanks of the very good implementation of Arthur Juliani https://github.com/awjuliani
@@ -767,9 +763,6 @@ def update_target_graph():
     for from_var,to_var in zip(from_vars,to_vars):
         op_holder.append(to_var.assign(from_var))
     return op_holder
-
-
-# In[ ]:
 
 
 # Saver will help us to save our model
@@ -942,255 +935,10 @@ if training == True:
                 save_path = saver.save(sess, "./models/model.ckpt")
                 print("Model Saved")
 
-Episode: 0 Total reward: -89.26519775390625 Training loss: 0.6859 Explore P: 0.9919
-Model Saved
-Episode: 1 Total reward: -115.13249206542969 Training loss: 1.0044 Explore P: 0.9872
-Episode: 2 Total reward: -88.6678466796875 Training loss: 30.3196 Explore P: 0.9760
-Episode: 3 Total reward: -79.75584411621094 Training loss: 0.4285 Explore P: 0.9687
-Episode: 4 Total reward: -112.888916015625 Training loss: 17.6260 Explore P: 0.9616
-Episode: 5 Total reward: -72.01809692382812 Training loss: 0.3325 Explore P: 0.9566
-Model Saved
-Episode: 6 Total reward: -91.27947998046875 Training loss: 11.2775 Explore P: 0.9489
-Episode: 7 Total reward: -96.70150756835938 Training loss: 0.8339 Explore P: 0.9412
-Episode: 8 Total reward: -89.98007202148438 Training loss: 10.4413 Explore P: 0.9368
-Episode: 9 Total reward: -78.67872619628906 Training loss: 13.1729 Explore P: 0.9292
-Episode: 10 Total reward: -114.67742919921875 Training loss: 30.3574 Explore P: 0.9192
-Model Saved
-Episode: 11 Total reward: -96.40922546386719 Training loss: 1.3338 Explore P: 0.9128
-Episode: 12 Total reward: -55.94306945800781 Training loss: 1.0281 Explore P: 0.9030
-Episode: 13 Total reward: -90.61083984375 Training loss: 17.3349 Explore P: 0.8908
-Episode: 14 Total reward: -110.54817199707031 Training loss: 11.5495 Explore P: 0.8845
-Episode: 15 Total reward: -86.7437744140625 Training loss: 8.5952 Explore P: 0.8773
-Model Saved
-Episode: 16 Total reward: -108.89964294433594 Training loss: 1.6884 Explore P: 0.8730
-Episode: 17 Total reward: -59.06085205078125 Training loss: 1.4325 Explore P: 0.8659
-Episode: 18 Total reward: -102.50300598144531 Training loss: 1.0175 Explore P: 0.8593
-Episode: 19 Total reward: -100.752685546875 Training loss: 7.5007 Explore P: 0.8556
-Episode: 20 Total reward: -111.81524658203125 Training loss: 5.0652 Explore P: 0.8487
-Model Saved
-Episode: 21 Total reward: -104.21478271484375 Training loss: 1.5522 Explore P: 0.8395
-Episode: 22 Total reward: -112.78564453125 Training loss: 5.5151 Explore P: 0.8359
-Episode: 23 Total reward: -82.05340576171875 Training loss: 1.2886 Explore P: 0.8292
-Episode: 24 Total reward: -111.15492248535156 Training loss: 0.5443 Explore P: 0.8225
-Episode: 25 Total reward: -73.76707458496094 Training loss: 1.5218 Explore P: 0.8156
-Model Saved
-Episode: 26 Total reward: -93.35487365722656 Training loss: 0.9257 Explore P: 0.8088
-Episode: 27 Total reward: -104.47758483886719 Training loss: 2.1761 Explore P: 0.8023
-Episode: 28 Total reward: -81.60890197753906 Training loss: 0.5991 Explore P: 0.7958
-Episode: 29 Total reward: -100.63589477539062 Training loss: 1.7395 Explore P: 0.7894
-Episode: 30 Total reward: -88.62884521484375 Training loss: 8.3556 Explore P: 0.7830
-Model Saved
-Episode: 31 Total reward: -105.23612976074219 Training loss: 0.8298 Explore P: 0.7767
-Episode: 32 Total reward: -111.5128173828125 Training loss: 0.6878 Explore P: 0.7711
-Episode: 33 Total reward: -107.63644409179688 Training loss: 0.7860 Explore P: 0.7651
-Episode: 34 Total reward: -99.78999328613281 Training loss: 1.9388 Explore P: 0.7567
-Episode: 35 Total reward: -107.68731689453125 Training loss: 3.5948 Explore P: 0.7481
-Model Saved
-Episode: 36 Total reward: -112.137451171875 Training loss: 0.4563 Explore P: 0.7421
-Episode: 37 Total reward: -50.57890319824219 Training loss: 0.5308 Explore P: 0.7361
-Episode: 38 Total reward: -73.00382995605469 Training loss: 1.9759 Explore P: 0.7302
-Episode: 39 Total reward: -80.82208251953125 Training loss: 0.2969 Explore P: 0.7243
-Episode: 40 Total reward: -97.41578674316406 Training loss: 16.1484 Explore P: 0.7185
-Model Saved
-Episode: 41 Total reward: -77.568115234375 Training loss: 0.2420 Explore P: 0.7128
-Episode: 42 Total reward: -103.93637084960938 Training loss: 0.1838 Explore P: 0.7026
-Episode: 43 Total reward: -81.61286926269531 Training loss: 0.3259 Explore P: 0.6948
-Episode: 44 Total reward: -91.02716064453125 Training loss: 0.3337 Explore P: 0.6859
-Episode: 45 Total reward: -98.70729064941406 Training loss: 2.1673 Explore P: 0.6804
-Model Saved
-Episode: 46 Total reward: -115.98574829101562 Training loss: 14.9863 Explore P: 0.6726
-Episode: 47 Total reward: -100.81024169921875 Training loss: 2.0342 Explore P: 0.6654
-Episode: 48 Total reward: -60.25152587890625 Training loss: 0.2753 Explore P: 0.6569
-Episode: 49 Total reward: -67.41098022460938 Training loss: 0.3018 Explore P: 0.6486
-Episode: 50 Total reward: -105.46267700195312 Training loss: 1.0995 Explore P: 0.6413
-Model Saved
-Episode: 51 Total reward: -73.07460021972656 Training loss: 0.1813 Explore P: 0.6362
-Episode: 52 Total reward: -96.30844116210938 Training loss: 0.2939 Explore P: 0.6310
-Episode: 53 Total reward: -94.21073913574219 Training loss: 0.4776 Explore P: 0.6284
-Episode: 54 Total reward: -65.328125 Training loss: 0.2104 Explore P: 0.6233
-Episode: 55 Total reward: -66.21479797363281 Training loss: 3.2012 Explore P: 0.6183
-Model Saved
-Episode: 56 Total reward: -94.83515930175781 Training loss: 0.5179 Explore P: 0.6136
-Episode: 57 Total reward: -92.63566589355469 Training loss: 7.6108 Explore P: 0.6068
-Episode: 58 Total reward: -114.22836303710938 Training loss: 0.1981 Explore P: 0.5979
-Episode: 59 Total reward: -109.301025390625 Training loss: 0.1633 Explore P: 0.5931
-Episode: 60 Total reward: -69.18382263183594 Training loss: 0.3027 Explore P: 0.5883
-Model Saved
-Episode: 61 Total reward: -96.5882568359375 Training loss: 0.2388 Explore P: 0.5856
-Episode: 62 Total reward: -115.95585632324219 Training loss: 0.2598 Explore P: 0.5815
-Episode: 63 Total reward: -91.42893981933594 Training loss: 3.1792 Explore P: 0.5768
-Episode: 64 Total reward: -78.47196960449219 Training loss: 0.1737 Explore P: 0.5722
-Episode: 65 Total reward: -33.51860046386719 Training loss: 16.5782 Explore P: 0.5676
-Model Saved
-Episode: 66 Total reward: -52.46026611328125 Training loss: 0.7277 Explore P: 0.5630
-Episode: 67 Total reward: -104.60054016113281 Training loss: 0.1622 Explore P: 0.5585
-Episode: 68 Total reward: -77.99497985839844 Training loss: 2.5138 Explore P: 0.5540
-Episode: 69 Total reward: -54.47041320800781 Training loss: 0.1590 Explore P: 0.5496
-Episode: 70 Total reward: -63.22991943359375 Training loss: 0.1965 Explore P: 0.5452
-Model Saved
-Episode: 71 Total reward: -87.78546142578125 Training loss: 0.3122 Explore P: 0.5375
-Episode: 72 Total reward: -96.14764404296875 Training loss: 0.1515 Explore P: 0.5351
-Episode: 73 Total reward: -69.32623291015625 Training loss: 2.8430 Explore P: 0.5308
-Episode: 74 Total reward: -13.840484619140625 Training loss: 0.2721 Explore P: 0.5266
-Episode: 75 Total reward: -89.6734619140625 Training loss: 0.1506 Explore P: 0.5213
-Model Saved
-Episode: 76 Total reward: -64.53419494628906 Training loss: 1.8367 Explore P: 0.5171
-Episode: 77 Total reward: -106.41300964355469 Training loss: 0.3183 Explore P: 0.5072
-Episode: 78 Total reward: -50.4837646484375 Training loss: 0.2255 Explore P: 0.5033
-Episode: 79 Total reward: -34.91241455078125 Training loss: 0.1923 Explore P: 0.4976
-Episode: 80 Total reward: -115.21119689941406 Training loss: 0.1336 Explore P: 0.4950
-Model Saved
-Episode: 81 Total reward: -73.21771240234375 Training loss: 0.1376 Explore P: 0.4911
-Episode: 82 Total reward: -62.74360656738281 Training loss: 0.6687 Explore P: 0.4871
-Episode: 83 Total reward: -15.30194091796875 Training loss: 0.1503 Explore P: 0.4778
-Episode: 84 Total reward: -74.79470825195312 Training loss: 0.1727 Explore P: 0.4740
-Episode: 85 Total reward: -54.167205810546875 Training loss: 0.1432 Explore P: 0.4702
-Model Saved
-Episode: 86 Total reward: -62.83433532714844 Training loss: 0.1632 Explore P: 0.4665
-Episode: 87 Total reward: -82.97991943359375 Training loss: 0.1923 Explore P: 0.4644
-Episode: 88 Total reward: -72.07733154296875 Training loss: 0.2274 Explore P: 0.4607
-Episode: 89 Total reward: -55.19401550292969 Training loss: 0.1261 Explore P: 0.4570
-Episode: 90 Total reward: -76.98689270019531 Training loss: 0.7601 Explore P: 0.4505
-Model Saved
-Episode: 91 Total reward: -65.32528686523438 Training loss: 0.3138 Explore P: 0.4469
-Episode: 92 Total reward: -50.588714599609375 Training loss: 0.2203 Explore P: 0.4435
-Episode: 93 Total reward: -70.39730834960938 Training loss: 1.2486 Explore P: 0.4415
-
-Episode: 94 Total reward: 70.74258422851562 Training loss: 0.4045 Explore P: 0.4366
-Episode: 95 Total reward: -11.190460205078125 Training loss: 0.2244 Explore P: 0.4331
-Model Saved
-Episode: 96 Total reward: -22.803070068359375 Training loss: 0.4332 Explore P: 0.4297
-Episode: 97 Total reward: -43.600616455078125 Training loss: 2.4079 Explore P: 0.4265
-Episode: 98 Total reward: -74.661376953125 Training loss: 0.3113 Explore P: 0.4246
-Episode: 99 Total reward: -32.23060607910156 Training loss: 0.1899 Explore P: 0.4212
-Episode: 100 Total reward: -66.32485961914062 Training loss: 0.1400 Explore P: 0.4167
-Model Saved
-Episode: 101 Total reward: -15.644882202148438 Training loss: 0.0826 Explore P: 0.4134
-Episode: 102 Total reward: 44.1182861328125 Training loss: 0.1348 Explore P: 0.4101
-Episode: 103 Total reward: -61.74578857421875 Training loss: 0.6734 Explore P: 0.4058
-Episode: 104 Total reward: -87.16415405273438 Training loss: 0.2358 Explore P: 0.4026
-Episode: 105 Total reward: -90.69143676757812 Training loss: 0.4390 Explore P: 0.3939
-Model Saved
-Episode: 106 Total reward: -56.23359680175781 Training loss: 0.1456 Explore P: 0.3908
-Episode: 107 Total reward: -41.05461120605469 Training loss: 0.9647 Explore P: 0.3877
-Episode: 108 Total reward: -1.7525482177734375 Training loss: 0.4109 Explore P: 0.3846
-Episode: 109 Total reward: -37.95100402832031 Training loss: 0.2784 Explore P: 0.3815
-Episode: 110 Total reward: -71.89024353027344 Training loss: 0.1012 Explore P: 0.3786
-Model Saved
-Episode: 111 Total reward: -72.90853881835938 Training loss: 1.4025 Explore P: 0.3756
-Model updated
-Episode: 112 Total reward: -56.199127197265625 Training loss: 7.5684 Explore P: 0.3727
-Episode: 113 Total reward: -77.53300476074219 Training loss: 3.6123 Explore P: 0.3698
-Episode: 114 Total reward: -50.253692626953125 Training loss: 6.0007 Explore P: 0.3668
-Episode: 115 Total reward: 18.208023071289062 Training loss: 6.2701 Explore P: 0.3639
-Model Saved
-Episode: 116 Total reward: -74.686767578125 Training loss: 7.9382 Explore P: 0.3610
-Episode: 117 Total reward: -76.70317077636719 Training loss: 3.9754 Explore P: 0.3593
-Episode: 118 Total reward: 18.843551635742188 Training loss: 1.0298 Explore P: 0.3554
-Episode: 119 Total reward: 1.3499298095703125 Training loss: 1.5573 Explore P: 0.3525
-Episode: 120 Total reward: -0.566131591796875 Training loss: 0.4084 Explore P: 0.3497
-Model Saved
-Episode: 121 Total reward: 20.053070068359375 Training loss: 0.6762 Explore P: 0.3470
-Episode: 122 Total reward: -79.74948120117188 Training loss: 0.5085 Explore P: 0.3443
-Episode: 123 Total reward: -68.07794189453125 Training loss: 0.6844 Explore P: 0.3416
-Episode: 124 Total reward: 20.166915893554688 Training loss: 0.2775 Explore P: 0.3389
-Episode: 125 Total reward: -87.4755859375 Training loss: 0.3127 Explore P: 0.3364
-Model Saved
-Episode: 126 Total reward: -17.0537109375 Training loss: 0.3796 Explore P: 0.3337
-Episode: 127 Total reward: 5.201812744140625 Training loss: 0.6150 Explore P: 0.3311
-Episode: 128 Total reward: -32.572784423828125 Training loss: 0.2595 Explore P: 0.3285
-Episode: 129 Total reward: -43.18853759765625 Training loss: 0.4992 Explore P: 0.3259
-Episode: 130 Total reward: -84.01849365234375 Training loss: 0.3338 Explore P: 0.3226
-Model Saved
-Episode: 131 Total reward: -99.23286437988281 Training loss: 1.2294 Explore P: 0.3200
-Episode: 132 Total reward: -27.938064575195312 Training loss: 0.9042 Explore P: 0.3175
-Episode: 133 Total reward: 2.96868896484375 Training loss: 0.3110 Explore P: 0.3151
-Episode: 134 Total reward: -49.97503662109375 Training loss: 0.4291 Explore P: 0.3119
-Episode: 135 Total reward: 8.848037719726562 Training loss: 0.9113 Explore P: 0.3095
-Model Saved
-Episode: 136 Total reward: -78.30146789550781 Training loss: 1.1113 Explore P: 0.3064
-Episode: 137 Total reward: -35.61848449707031 Training loss: 0.2758 Explore P: 0.3039
-Episode: 138 Total reward: -80.23164367675781 Training loss: 1.1325 Explore P: 0.3015
-Episode: 139 Total reward: -41.44696044921875 Training loss: 0.2293 Explore P: 0.2993
-Episode: 140 Total reward: -63.55998229980469 Training loss: 0.5988 Explore P: 0.2969
-Model Saved
-Episode: 141 Total reward: -74.58718872070312 Training loss: 0.3622 Explore P: 0.2956
-Episode: 142 Total reward: -44.1854248046875 Training loss: 0.8818 Explore P: 0.2933
-Episode: 143 Total reward: -43.17417907714844 Training loss: 0.6441 Explore P: 0.2918
-Episode: 144 Total reward: -35.05082702636719 Training loss: 0.1932 Explore P: 0.2885
-Episode: 145 Total reward: 2.6080322265625 Training loss: 0.2974 Explore P: 0.2857
-Model Saved
-Episode: 146 Total reward: -75.66334533691406 Training loss: 0.2797 Explore P: 0.2828
-Episode: 147 Total reward: -79.89767456054688 Training loss: 14.5457 Explore P: 0.2805
-Episode: 148 Total reward: -65.21456909179688 Training loss: 0.7638 Explore P: 0.2783
-Episode: 149 Total reward: 13.195510864257812 Training loss: 0.3936 Explore P: 0.2761
-Episode: 150 Total reward: 60.77146911621094 Training loss: 1.1485 Explore P: 0.2739
-Model Saved
-Episode: 151 Total reward: -67.01502990722656 Training loss: 1.1541 Explore P: 0.2710
-Episode: 152 Total reward: 7.119903564453125 Training loss: 0.4257 Explore P: 0.2689
-Episode: 153 Total reward: 13.754486083984375 Training loss: 0.4931 Explore P: 0.2639
-Episode: 154 Total reward: -67.7314453125 Training loss: 0.5301 Explore P: 0.2618
-Episode: 155 Total reward: -61.25654602050781 Training loss: 0.3877 Explore P: 0.2599
-Model Saved
-Episode: 156 Total reward: -1.2131805419921875 Training loss: 0.3397 Explore P: 0.2579
-Episode: 157 Total reward: -26.2254638671875 Training loss: 0.1870 Explore P: 0.2558
-Episode: 158 Total reward: 71.63455200195312 Training loss: 0.3283 Explore P: 0.2538
-Episode: 159 Total reward: -41.72747802734375 Training loss: 0.6035 Explore P: 0.2520
-Episode: 160 Total reward: -75.83839416503906 Training loss: 0.5253 Explore P: 0.2488
-Model Saved
-Episode: 161 Total reward: 3.0420074462890625 Training loss: 0.8875 Explore P: 0.2468
-Episode: 162 Total reward: -21.011383056640625 Training loss: 0.2739 Explore P: 0.2449
-Episode: 163 Total reward: -19.587127685546875 Training loss: 1.2479 Explore P: 0.2431
-Episode: 164 Total reward: -53.40458679199219 Training loss: 1.2350 Explore P: 0.2413
-Episode: 165 Total reward: -59.686767578125 Training loss: 0.4527 Explore P: 0.2395
-Model Saved
-Episode: 166 Total reward: -53.43865966796875 Training loss: 12.8202 Explore P: 0.2384
-Episode: 167 Total reward: 4.73968505859375 Training loss: 0.2532 Explore P: 0.2366
-Episode: 168 Total reward: -42.3804931640625 Training loss: 0.6826 Explore P: 0.2347
-Episode: 169 Total reward: -1.4572296142578125 Training loss: 0.5197 Explore P: 0.2329
-Episode: 170 Total reward: -39.27558898925781 Training loss: 11.5407 Explore P: 0.2311
-Model Saved
-Episode: 171 Total reward: 8.362579345703125 Training loss: 0.2713 Explore P: 0.2295
-Episode: 172 Total reward: 14.519943237304688 Training loss: 7.7963 Explore P: 0.2277
-Episode: 173 Total reward: -58.884429931640625 Training loss: 0.3072 Explore P: 0.2259
-Episode: 174 Total reward: -93.07179260253906 Training loss: 0.6735 Explore P: 0.2235
-Episode: 175 Total reward: -60.440277099609375 Training loss: 0.6426 Explore P: 0.2218
-Model Saved
-Episode: 176 Total reward: 24.163375854492188 Training loss: 0.5932 Explore P: 0.2201
-Episode: 177 Total reward: -74.15121459960938 Training loss: 0.1940 Explore P: 0.2191
-Episode: 178 Total reward: -47.54103088378906 Training loss: 0.9826 Explore P: 0.2174
-Episode: 179 Total reward: -88.96371459960938 Training loss: 0.6407 Explore P: 0.2157
-Episode: 180 Total reward: 86.02571105957031 Training loss: 0.3157 Explore P: 0.2134
-Model Saved
-Episode: 181 Total reward: -8.269500732421875 Training loss: 1.0492 Explore P: 0.2118
-Episode: 182 Total reward: 37.916839599609375 Training loss: 0.3531 Explore P: 0.2102
-Episode: 183 Total reward: 28.824462890625 Training loss: 0.3685 Explore P: 0.2086
-Episode: 184 Total reward: -103.504150390625 Training loss: 0.8678 Explore P: 0.2077
-Episode: 185 Total reward: -33.638336181640625 Training loss: 0.5436 Explore P: 0.2062
-Model Saved
-Episode: 186 Total reward: -46.80809020996094 Training loss: 0.8421 Explore P: 0.2046
-
-Episode: 187 Total reward: 4.5064849853515625 Training loss: 0.2865 Explore P: 0.2030
-Episode: 188 Total reward: -10.029891967773438 Training loss: 0.4644 Explore P: 0.2014
-Episode: 189 Total reward: -35.31138610839844 Training loss: 0.3323 Explore P: 0.1999
-Episode: 190 Total reward: 22.30352783203125 Training loss: 0.6971 Explore P: 0.1984
-Model Saved
-Episode: 191 Total reward: -54.252655029296875 Training loss: 0.7283 Explore P: 0.1968
-Episode: 192 Total reward: -94.67848205566406 Training loss: 1.4658 Explore P: 0.1959
-Episode: 193 Total reward: -38.33479309082031 Training loss: 0.2945 Explore P: 0.1944
-Episode: 194 Total reward: -96.05851745605469 Training loss: 0.2530 Explore P: 0.1929
-Episode: 195 Total reward: -16.951339721679688 Training loss: 0.8220 Explore P: 0.1914
-Model Saved
-Episode: 196 Total reward: -104.72447204589844 Training loss: 0.4501 Explore P: 0.1900
-Episode: 197 Total reward: -3.453094482421875 Training loss: 0.4974 Explore P: 0.1886
-Episode: 198 Total reward: -26.187362670898438 Training loss: 0.2195 Explore P: 0.1872
-Episode: 199 Total reward: -98.55648803710938 Training loss: 0.2501 Explore P: 0.1864
-Episode: 200 Total reward: -16.166595458984375 Training loss: 0.3163 Explore P: 0.1850
-Model Saved
 # ## Step 9: Watch our Agent play 👀
 # Now that we trained our agent, we can test it
 
-# In[ ]:
+ 
 
 
 with tf.Session() as sess:
