@@ -47,7 +47,7 @@ We have 4 channels because of the 4 frames stacked ont top of eachother.
 
 ### Memory
 #### Frames
-Only every 4 frames is considered
+Only every 4 frames is considered because having only 1 frame doesn't allow our agent to decide the motion of the objects in the game
 
 
 We use deque to stack the frames every episode.First apending the frame on the deque and then stack the array of frames onto eachother(4 dimensions). 
