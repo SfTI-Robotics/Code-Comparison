@@ -63,7 +63,7 @@ Here we build two NN one for the value function and the second advantage functio
 ```
 
 ## Sumtrees
-
+Binary Trees which have a property that the children nodes have to add to form the parent node.
 
 
 ## Memory
@@ -72,6 +72,17 @@ Here we build two NN one for the value function and the second advantage functio
 e,a,b is used for importance sampling see kevins paper
 
 ### Storing
+```
+max_priority = np.max(self.tree.tree[-self.tree.capacity:])
+        
+        # If the max priority = 0 we can't put priority = 0 since this exp will never have a chance to be selected
+        # So we use a minimum priority
+        if max_priority == 0:
+            max_priority = self.absolute_error_upper
+        
+        self.tree.add(max_priority, experience)   # set the max p for new p
+
+```
 
 ### Experience Replay
 
@@ -114,3 +125,4 @@ def predict_action(explore_start, explore_stop, decay_rate, decay_step, state, a
 Questions 
 - what are filters
 - isweights
+- - sumtrees

@@ -506,7 +506,6 @@ tree_index  0 0  0  We fill the leaves from left to right
 
 # Here we don't use deque anymore
 
-# In[ ]:
 
 
 class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
@@ -514,7 +513,7 @@ class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
     This SumTree code is modified version and the original code is from:
     https://github.com/jaara/AI-blog/blob/master/Seaquest-DDQN-PER.py
     """
-    
+    # see medium article for explaination of hyperparameters
     PER_e = 0.01  # Hyperparameter that we use to avoid some experiences to have 0 probability of being taken
     PER_a = 0.6  # Hyperparameter that we use to make a tradeoff between taking only exp with high priority and sampling randomly
     PER_b = 0.4  # importance-sampling, from initial value increasing to 1
