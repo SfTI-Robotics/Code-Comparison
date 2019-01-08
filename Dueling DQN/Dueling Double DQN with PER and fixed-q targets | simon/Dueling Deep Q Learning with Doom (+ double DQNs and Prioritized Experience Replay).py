@@ -38,6 +38,7 @@ def create_environment():
 
     # Here we create an hot encoded version of our actions (5 possible actions)
     # possible_actions = [[1, 0, 0, 0, 0], [0, 1, 0, 0, 0]...]
+    # action space
     possible_actions = np.identity(7,dtype=int).tolist()
     
     return game, possible_actions
@@ -132,7 +133,7 @@ def stack_frames(stacked_frames, state, is_new_episode):
         stacked_frames.append(frame)
         stacked_frames.append(frame)
         
-        # Stack the frames
+        # Stack the frames in deque onto state `stack`
         stacked_state = np.stack(stacked_frames, axis=2)
 
     else:
@@ -219,7 +220,7 @@ class DDDQNNet:
             # [None, 100, 120, 4]
             self.inputs_ = tf.placeholder(tf.float32, [None, *state_size], name="inputs")
             
-            #
+            # Importance sampling
             self.ISWeights_ = tf.placeholder(tf.float32, [None,1], name='IS_weights')
             
             self.actions_ = tf.placeholder(tf.float32, [None, action_size], name="actions_")
@@ -229,8 +230,8 @@ class DDDQNNet:
             
             """
             First convnet:
-            CNN
-            ELU
+            CNN     # convolutional layer
+            ELU     # exponential linear unit
             """
             # Input is 100x120x4
             self.conv1 = tf.layers.conv2d(inputs = self.inputs_,
@@ -485,7 +486,7 @@ tree_index  0 0  0  We fill the leaves from left to right
                 break
             
             else: # downward search, always search for a higher priority node
-                
+                # find priority value of v (index) 
                 if v <= self.tree[left_child_index]:
                     parent_index = left_child_index
                     
@@ -498,6 +499,7 @@ tree_index  0 0  0  We fill the leaves from left to right
         return leaf_index, self.tree[leaf_index], self.data[data_index]
     
     @property
+    # related to getters and setters
     def total_priority(self):
         return self.tree[0] # Returns the root node
 
@@ -512,6 +514,7 @@ class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
     This SumTree code is modified version and the original code is from:
     https://github.com/jaara/AI-blog/blob/master/Seaquest-DDQN-PER.py
     """
+    
     PER_e = 0.01  # Hyperparameter that we use to avoid some experiences to have 0 probability of being taken
     PER_a = 0.6  # Hyperparameter that we use to make a tradeoff between taking only exp with high priority and sampling randomly
     PER_b = 0.4  # importance-sampling, from initial value increasing to 1
