@@ -39,10 +39,27 @@ action_size = game.get_available_buttons_size()
 ```
 7 buttons may also be pause button but only need 5.
 
+```
+state_size = [100,120,4] 
+```
+We have 4 channels because of the 4 frames stacked ont top of eachother.
+
+
 ### Memory
 #### Frames
 Only every 4 frames is considered
-We use deque to stack the frames every episode.First apending the frame on the deque and then stack the array of frames onto eachother(4 dimensions). If full remove the oldest one(smalest q values and least reliable)
+
+
+We use deque to stack the frames every episode.First apending the frame on the deque and then stack the array of frames onto eachother(4 dimensions). 
+
+```
+stacked_state = np.stack(stacked_frames, axis=2)
+```
+
+We consider 2 stacks(axis=2) one with the initial state and one with the next state(each with 4 frames).
+
+If full remove the oldest one(smalest q values and least reliable).
+Each time we have a new state deque removes the next state frames and first.
 
 ## DDDQN Algorithm
 
