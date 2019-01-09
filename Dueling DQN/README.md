@@ -232,8 +232,15 @@ A function to take action,rewards and state into a dictionary for processing.
 labels=rewards
 
 ### Train step
+Traing the network
+if a summary object has not been created/running then calculate loss, predictions etc... else if there's a session running then continue feeding the tuples into it.
+
+### predict
 
 
+### save_Tranisition
+
+Putting tuples into the dictionary and adding it into its replay memory
 
 
 
