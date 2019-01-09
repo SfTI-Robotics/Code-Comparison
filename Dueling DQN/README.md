@@ -74,7 +74,7 @@ then we use elu to scale it down
 
 ### Building Model
 
-Here we build two NN one for the value function and the second advantage function.The inputs for both are the flattened processed layers discussed above.Then the second layers for each take the previous layer and give the output V(s) is the reward number and advantage is the action to take.
+Here we build two NN one for the value function and the second advantage function.The inputs for both are the flattened processed layers discussed above.Then the second layers for each take the previous layer and give the output V(s) is the reward number and advantage is the action to take. this is where the dueling DQN is implemented.
 
 
 ## Sumtrees
@@ -118,10 +118,17 @@ Increase value of b as we have more samples from the minibatch
 minimum priority is divided by total priority to find find the smallest chance of using an experience. 
 
 `max_weight = (p_min * n) ** (-self.PER_b)`
+probablity is inversely proportional
 the minimum priority is multiplied by the minibatch sample size, then raised to the negative bias  value.
 
-### Updating
+A for loop is used to search the SumTree for the randomly selected value from the minibatch of experiences. This uses the `get_leaf` function. a random value (probability?) is generated and the corresponding priority value, experience and index of priority value in tree.
 
+Only sampling between two sets(range is quite small)
+
+
+### Updating
+Here we increas abs error until it reaches 1 and takes the min between it and 1.
+update Sumtree priority by calculating the priority score from error raised to the power of the a parameter, then using the `update` function. 
 
 ## Learning
 
@@ -153,7 +160,16 @@ def predict_action(explore_start, explore_stop, decay_rate, decay_step, state, a
     return action, explore_probability
 ```
 First we randomise a number then we use improved epsilon greedy strategy then use the same explortion/explitation
+
+## update target graph
+copying values from behav to target so it is our double DQN implementation 
+
+
 ## Training
+
+fixed q values thing: 
+update target values after 10000 steps using tau variable
+
 
 
 

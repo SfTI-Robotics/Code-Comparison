@@ -574,8 +574,6 @@ class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
         # Calculating the max_weight
         p_min = np.min(self.tree.tree[-self.tree.capacity:]) / self.tree.total_priority
         # ** means to raise to an exponential  
-
-        #??
         max_weight = (p_min * n) ** (-self.PER_b)
         
         for i in range(n):
@@ -590,10 +588,11 @@ class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
             """
             index, priority, data = self.tree.get_leaf(value)
             
-            #P(j)
+            #P(j) = P(i)
             sampling_probabilities = priority / self.tree.total_priority
             
-            #  IS = (1/N * 1/P(i))**b /max wi == (N*P(i))**-b  /max wi
+            #  IS = (1/N * 1/P(i))**b /max wi 
+            #     == (N*P(i))**-b  /max wi
             b_ISWeights[i, 0] = np.power(n * sampling_probabilities, -self.PER_b)/ max_weight
                                    
             b_idx[i]= index
@@ -610,6 +609,7 @@ class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
     def batch_update(self, tree_idx, abs_errors):
         abs_errors += self.PER_e  # convert to abs and avoid 0
         clipped_errors = np.minimum(abs_errors, self.absolute_error_upper)
+        # priority score
         ps = np.power(clipped_errors, self.PER_a)
 
         for ti, p in zip(tree_idx, ps):
@@ -902,7 +902,7 @@ if training == True:
                         target_Qs_batch.append(rewards_mb[i])
                         
                     else:
-                        # Take the Qtarget for action a'
+                        # Take the Qtarget for action a', Bellman Equation
                         target = rewards_mb[i] + gamma * q_target_next_state[i][action]
                         target_Qs_batch.append(target)
                         
@@ -910,8 +910,8 @@ if training == True:
                 targets_mb = np.array([each for each in target_Qs_batch])
 
                 
-                _, loss, absolute_errors = sess.run([DQNetwork.optimizer, DQNetwork.loss, DQNetwork.absolute_errors],
-                                    feed_dict={DQNetwork.inputs_: states_mb,
+                _, loss, absolute_errors = sess.run([DQNetwork.optimizer, DQNetwork.loss, DQNetwork.absolute_errors],   
+                           feed_dict={DQNetwork.inputs_: states_mb,
                                                DQNetwork.target_Q: targets_mb,
                                                DQNetwork.actions_: actions_mb,
                                               DQNetwork.ISWeights_: ISWeights_mb})
