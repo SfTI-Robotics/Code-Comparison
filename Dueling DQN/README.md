@@ -205,3 +205,14 @@ value layers only have num of states to 1 as each state can only have one value 
 ## error and calculations
 we use the formula value+(advantage-error) to solve backpropagattion
 
+## Qlearning
+
+### init 
+initialising everything
+predictions-is the q predictioncs
+` self.q_vals = self.q_vals(self.predictions, self.actions_pl)`
+this is simply decalring that q_vals is a function 
+
+
+
+
