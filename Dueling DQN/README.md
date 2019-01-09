@@ -109,6 +109,8 @@ A min priority is needed incase our environment is exatcly how it needs to be(fa
 
 Updates the tree to add the new expeirnce instead of sum tree. assigns the data (experience) into the date frame. " we store a new experience in our tree. Each new experience will have priority = max_priority (and then this priority will be corrected during the training (when we'll calculating the TD error hence the priority score)."
 
+new experiences are equal to max priority
+
 
 
 ### Prioritized Experience Replay
@@ -118,6 +120,12 @@ sample:
 first it creates the two empty arrays
 
 Is Weights increases to avoid earlier experiences later on(as the are inaccurate/not reliable)
+
+Then we split the experiences into n range. And we get a random value for each range and using this value we select an experience corresponding to that value(get leaf).
+
+`b_ISWeights[i, 0] = np.power(n * sampling_probabilities, -self.PER_b)/ max_weight`
+
+We then ge the importance sampling weight but also divide by max weights to make sure it wont be bigger than 1.
 
 Increase value of b as we have more samples from the minibatch 
 
@@ -187,3 +195,6 @@ Questions
 - what are filters
 - isweights
 - - sumtrees
+
+# Second code
+
