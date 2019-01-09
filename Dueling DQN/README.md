@@ -74,9 +74,14 @@ then we use elu to scale it down
 
 ### Building Model
 
+#### Doom
 Here we build two NN one for the value function and the second advantage function.The inputs for both are the flattened processed layers discussed above.Then the second layers for each take the previous layer and give the output V(s) is the reward number and advantage is the action to take. this is where the dueling DQN is implemented.
 
 self.output equation is the aggrigating layer and is used as you simply can't just add them toghether(Duelling system)
+
+#### Cart Pole
+
+The hidden layer 
 
 
 ## Sumtrees
