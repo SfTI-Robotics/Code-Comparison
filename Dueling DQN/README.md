@@ -198,3 +198,10 @@ Questions
 
 # Second code
 
+## Building model
+
+value layers only have num of states to 1 as each state can only have one value but advantage is always num of states to num of actions as there's different q values
+ 
+## error and calculations
+we use the formula value+(advantage-error) to solve backpropagattion
+
