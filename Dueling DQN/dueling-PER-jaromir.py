@@ -234,7 +234,7 @@ class Environment:
 
         R = 0
         while True:         
-            # self.env.render()
+            self.env.render()
             a = agent.act(s)
 
             r = 0
