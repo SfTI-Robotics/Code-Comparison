@@ -76,6 +76,8 @@ then we use elu to scale it down
 
 Here we build two NN one for the value function and the second advantage function.The inputs for both are the flattened processed layers discussed above.Then the second layers for each take the previous layer and give the output V(s) is the reward number and advantage is the action to take. this is where the dueling DQN is implemented.
 
+self.output equation is the aggrigating layer and is used as you simply can't just add them toghether(Duelling system)
+
 
 ## Sumtrees
 Binary Trees which have a property that the children nodes have to add to form the parent node.
@@ -83,6 +85,8 @@ Binary Trees which have a property that the children nodes have to add to form t
 They store the priority values of the experience transitions. 
 
 ## Memory
+
+We no longer use deques as when it add and removes it changes the indexes for every experiences(not efficient)
 
 ### Intialisation
 e,a,b is used for importance sampling see kevins paper
@@ -107,7 +111,9 @@ Updates the tree to add the new expeirnce instead of sum tree. assigns the data 
 
 
 
-### Experience Replay
+### Prioritized Experience Replay
+
+Rally important to use when using double and duelling we can't just use a replay buffer, we don't choose them randomly but rather select them based on priorisation score. Binary Tree is used for efficiency.
 sample: 
 first it creates the two empty arrays
 
@@ -162,13 +168,17 @@ def predict_action(explore_start, explore_stop, decay_rate, decay_step, state, a
 First we randomise a number then we use improved epsilon greedy strategy then use the same explortion/explitation
 
 ## update target graph
-copying values from behav to target so it is our double DQN implementation 
+copying values from behav to target so it is our double DQN implementation then we calclate q target of next state(Double DQN)
+
+
 
 
 ## Training
 
 fixed q values thing: 
 update target values after 10000 steps using tau variable
+
+Fisrt we use the DQN to get q values for necxt state then 
 
 
 
