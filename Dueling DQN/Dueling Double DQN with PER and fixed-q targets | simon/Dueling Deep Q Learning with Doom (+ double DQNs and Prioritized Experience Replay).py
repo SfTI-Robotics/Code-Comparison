@@ -233,6 +233,7 @@ class DDDQNNet:
             CNN     # convolutional layer
             ELU     # exponential linear unit
             """
+            # filtering increases with each CNN layer 
             # Input is 100x120x4
             self.conv1 = tf.layers.conv2d(inputs = self.inputs_,
                                          filters = 32,
@@ -518,6 +519,7 @@ class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
     PER_a = 0.6  # Hyperparameter that we use to make a tradeoff between taking only exp with high priority and sampling randomly
     PER_b = 0.4  # importance-sampling, from initial value increasing to 1
     
+    # increase b so that bias is increased 
     PER_b_increment_per_sampling = 0.001
     
     absolute_error_upper = 1.  # clipped abs error
@@ -558,10 +560,12 @@ class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
         # Create a sample array that will contains the minibatch
         memory_b = []
         
+        # initialisation
         b_idx, b_ISWeights = np.empty((n,), dtype=np.int32), np.empty((n, 1), dtype=np.float32)
         
         # Calculate the priority segment
         # Here, as explained in the paper, we divide the Range[0, ptotal] into n ranges
+        # total priority: returns root node
         priority_segment = self.tree.total_priority / n       # priority segment
     
         # Here we increasing the PER_b each time we sample a new minibatch
@@ -569,6 +573,9 @@ class Memory(object):  # stored as ( s, a, r, s_ ) in SumTree
         
         # Calculating the max_weight
         p_min = np.min(self.tree.tree[-self.tree.capacity:]) / self.tree.total_priority
+        # ** means to raise to an exponential  
+
+        #??
         max_weight = (p_min * n) ** (-self.PER_b)
         
         for i in range(n):

@@ -86,6 +86,7 @@ They store the priority values of the experience transitions.
 
 ### Intialisation
 e,a,b is used for importance sampling see kevins paper
+Its initialised as a sum tree but also an array for our experience 
 
 ### Storing
 ```
@@ -99,8 +100,25 @@ max_priority = np.max(self.tree.tree[-self.tree.capacity:])
         self.tree.add(max_priority, experience)   # set the max p for new p
 
 ```
+Store memory=ies in tree, looks a t leaves and gets the max. Does this by extracting the tree value data (tree) that is stored in the SumTree (self.tree). #badnaming
+A min priority is needed incase our environment is exatcly how it needs to be(failsafe).
+
+Updates the tree to add the new expeirnce instead of sum tree. assigns the data (experience) into the date frame. " we store a new experience in our tree. Each new experience will have priority = max_priority (and then this priority will be corrected during the training (when we'll calculating the TD error hence the priority score)."
+
+
 
 ### Experience Replay
+sample: 
+first it creates the two empty arrays
+
+Is Weights increases to avoid earlier experiences later on(as the are inaccurate/not reliable)
+
+Increase value of b as we have more samples from the minibatch 
+
+minimum priority is divided by total priority to find find the smallest chance of using an experience. 
+
+`max_weight = (p_min * n) ** (-self.PER_b)`
+the minimum priority is multiplied by the minibatch sample size, then raised to the negative bias  value.
 
 ### Updating
 
@@ -124,7 +142,7 @@ def predict_action(explore_start, explore_stop, decay_rate, decay_step, state, a
         action = random.choice(possible_actions)
         
     else:
-        # Get action from Q-network (exploitation)
+        # Get action from Q-network (exploitation) 
         # Estimate the Qs values state
         Qs = sess.run(DQNetwork.output, feed_dict = {DQNetwork.inputs_: state.reshape((1, *state.shape))})
         
