@@ -213,6 +213,27 @@ predictions-is the q predictioncs
 ` self.q_vals = self.q_vals(self.predictions, self.actions_pl)`
 this is simply decalring that q_vals is a function 
 
+## q_vals 
+simply getting the value and returning
+
+## loss
+
+TD error simply getting the value and returning,these functions show good coding as it breaks it down enough for people unfamiliar with the code to understand and also there's alot of good commenting.
+Logits=q vals
+
+## Training
+
+Returning a method for training the network using an optimiser and mininmising the loss.
+global step counter is updated
+
+### fill feed dict 
+Overdoing abstraction
+A function to take action,rewards and state into a dictionary for processing.
+labels=rewards
+
+### Train step
+
+
 
 
 
