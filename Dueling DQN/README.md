@@ -210,6 +210,8 @@ value layers only have num of states to 1 as each state can only have one value 
 ## error and calculations
 we use the formula value+(advantage-error) to solve backpropagattion
 
+
+
 ## Qlearning
 
 ### init 
@@ -247,5 +249,42 @@ if a summary object has not been created/running then calculate loss, prediction
 
 Putting tuples into the dictionary and adding it into its replay memory
 
+# transition
+save transition into a usable format in your replay buffer
+
+### Select action
+exploitation vs exploration= target prediction
+predictions= values use max q ro get action
+
+### train with batch
+
+fixed q target so the behav network becomes the targte network blah blah
+select batch of experiences for experience replay
+Labels is used throughout the code to represent different things in this function it represents the q vqlue this is a good example of BAD NAMING.
 
 
+### calcError
+
+prediction is q behaviour 
+
+label is q target found using bellman
+
+then find thge error between the two
+
+## replay Memoy
+### Add
+`(error + MEMORY_BIAS)`is just the priority(pt) where as the priority variable is a probability of that priority
+
+
+### sample
+create segments and randomly select a sample to append using   `get` function from SumTree
+
+## Main
+```
+if np.mean(last_100) >= 195:
+                gym.upload('/tmp/cartpole-experiment-1',
+                    api_key=sys.argv[1])
+                exit()
+
+```
+If it succesfully completes the episode in the last 100 tries then it ends the algorithm
