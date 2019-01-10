@@ -146,6 +146,7 @@ def stack_frames(stacked_frames, state, is_new_episode):
     return stacked_state, stacked_frames
 
 
+
 # ## Step 4: Set up our hyperparameters ⚗️
 # In this part we'll set up our different hyperparameters. But when you implement a Neural Network by yourself you will **not implement hyperparamaters at once but progressively**.
 # 
@@ -420,7 +421,7 @@ tree_index  0 0  0  We fill the leaves from left to right
         self.data[self.data_pointer] = data
         
         # Update the leaf
-        self.update (tree_index, priority)
+        self.update(tree_index, priority)
         
         # Add 1 to data_pointer
         self.data_pointer += 1

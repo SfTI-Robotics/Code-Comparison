@@ -8,49 +8,57 @@ Doom [Article](https://medium.freecodecamp.org/improvements-in-deep-q-learning-d
 
 ## Overall differences
 
-### Diff 1 : Keras vs Tensorflow
-Using Keras simplifies the computation set up process the Keras functions combine multiple Tensorflow functions into one. 
-
-### Diff 2 : Abstraction/encapsulation
-More functions to avoid repetition of code.
-
+The structure of the two codes varies from each as the abstraction is set up according to the author's individual styles. Cart Pole code has a lot more abstraction and encapsulation, so expect to see more objects/classes.
+Another key difference is that the environments they use widely differ as DOOM uses images that need to be processed and will run through the neural network layers using convulutional layers. Whereas the pendulum doesnt require this and so the code will be shorter
 ## In depth comparison
 
 ### Create Environment
 
 creating object and environment
 
-#### Parameters
+#### Doom
+Doom is quite a different environment that requires additional steps after calling the environment also you have to initialise the environment at the begiining of the code. 
 
-- action space = identity matrix
+Additionally you have to take in account the external buttons:
+
 ```
 possible_actions = np.identity(7,dtype=int).tolist()
-    
-    return game, possible_actions
-
-
-game, possible_actions = create_environment()
+return game, possible_actions
 ```
-Use this when choosing actions
-```
-state_size = [100,120,4]      # Our input is a stack of 4 frames hence 100x120x4 (Width, height, channels) 
-action_size = game.get_available_buttons_size() 
+Game has 7 buttons may some may  be pause button and other things but we only need 5. The action space is initialised as an 7 x 7 identity matrix.
 
-```
-7 buttons may also be pause button but only need 5.
+e.g:possible_actions = [[1, 0, 0, 0, 0], [0, 1, 0, 0, 0]...]
+
+[1, 0, 0, 0, 0] may correspond to up and [0, 1, 0, 0, 0] may correspond to down
+
+### Hyperparameters
+#### Doom
 
 ```
 state_size = [100,120,4] 
 ```
-We have 4 channels because of the 4 frames stacked ont top of eachother.
+We have 4 channels because of the 4 frames stacked ont top of each other and 100x120 is just the image size.
+
+```
+max_tau = 10000 
+```
+
+The target network is updated only when the step numbers reach a certain number(10000). This is the concept of fixed Q-values.
 
 
-### Memory
-#### Frames
-Only every 4 frames is considered because having only 1 frame doesn't allow our agent to decide the motion of the objects in the game
+### Nueral Network 
 
+#### Frames (DOOM only)
 
-We use deque to stack the frames every episode.First apending the frame on the deque and then stack the array of frames onto eachother(4 dimensions). 
+#### Preprocessed
+
+The pixels of a single frame are normalised so that each pixel has a similar distribution. this helps the stochastic gradient descent converges faster.
+
+#### Stack frame
+
+Only every 4 frames is considered because having only 1 frame doesn't give the neural network a sense of motion for the objects in the game.
+We use deque to stack the frames every episode.First appending the frame on the deque and then stack the array of frames onto each other(4 dimensions). When full, the deque automatically removes the oldest one(smalest q values and least reliable).
+
 
 ```
 stacked_state = np.stack(stacked_frames, axis=2)
@@ -58,36 +66,56 @@ stacked_state = np.stack(stacked_frames, axis=2)
 
 We consider 2 stacks(axis=2) one with the initial state and one with the next state(each with 4 frames).
 
-If full remove the oldest one(smalest q values and least reliable).
-Each time we have a new state deque removes the next state frames and first.
+`stacked_state` is a stack data type and `stacked_frames` is a deque data type. 
+
+
 
 ## DDDQN Algorithm
-
-### initialisation
-Uses tensorflow .
-Has 4placeholders that will be used later on.
-
-### Conv NN
-So it uses 3 convulutional layers. Each one first using the con2d function to split the frame into parts eg:player, victims etc... 
-
-then we use elu to scale it down
+### Init
+#### DOOM
+Has 4 placeholders that will be used later on: inputs, importance sampling weights, actions and target Q-value.
 
 ### Building Model
+#### DOOM
 
-#### Doom
-Here we build two NN one for the value function and the second advantage function.The inputs for both are the flattened processed layers discussed above.Then the second layers for each take the previous layer and give the output V(s) is the reward number and advantage is the action to take. this is where the dueling DQN is implemented.
+##### Convolutional NN
+So it uses 3 convolutional layers. Each one uses the `conv2d` function to split the frame into parts eg:player, victims etc... 
+Then we use elu network to restrict the data to a range and adds the layers.
 
-self.output equation is the aggrigating layer and is used as you simply can't just add them toghether(Duelling system)
+#### NN
+Here we build two separate NN, one for the value function and the second advantage function. The inputs for both are the flattened processed layers discussed above.Then the second layers for each take the previous layer and give the output .V(s) is the reward number and advantage is the action to take. This is where the dueling DQN is implemented.
 
-#### Cart Pole
+##### Aggrigating Layer
+`self.Q` equations is the aggrigating layer and is used as you simply can't just add them together (duelling system). Instead we use the formula: `Q(s,a) = V(s) + (A(s,a) - 1/|A| * sum A(s,a'))`.
 
-The hidden layer 
-
+#### Absolute error
+```
+self.absolute_errors = tf.abs(self.target_Q - self.Q)# for updating Sumtree
+```
+The absolute error is the TD error and is used for Prioritised Experience Replay, not for the duelling DQN. It updates the SumTree which also modifies the loss. 
+            
 
 ## Sumtrees
-Binary Trees which have a property that the children nodes have to add to form the parent node.
+Binary Trees which have a property that the children nodes have to add to form the parent node. They store the priority values of the experience transitions. Leaf Nodes are special nodes, that are at the bottom tier of tree.
 
-They store the priority values of the experience transitions. 
+def init: 
+
+ Initialize our SumTree data object with all nodes = 0 and data (data array) with all = 0. The tree capacity ( = number of nodes) is calculated by taking the leaf node number (`capacity`) multiplied by 2 and subtract 1. `Data` array store experience of leaf nodes.
+
+def add: 
+
+add our priority score in the sumtree leaf and experience (S, A, R, S', Done) in data. The `tree index` is the left-most leaf node's index. `data_pointer` is an index for the data array.
+
+ def update: 
+ we update the leaf priority score and propagate through tree. The old priority score is replaced by the new priority score. Then we trace/traverse back along the branch to the upper tiers of the Sum Tree. These nodes are incremented with the difference between the new and old priority score.
+ 
+A priority score is a value assigned to each node showing that importance of that experience(ie:this action might lead to a very high reward(1,000,000 pts)). How ever each priority also has a probability (ie: the million reward has a 1/1000 chance of getting it).
+ 
+ def get_leaf: retrieve priority score, index and experience associated with a leaf.
+ 
+ def total_priority: get the root node value to calculate the total priority score of our replay buffer.
+# 
+
 
 ## Memory
 
@@ -288,3 +316,8 @@ if np.mean(last_100) >= 195:
 
 ```
 If it succesfully completes the episode in the last 100 tries then it ends the algorithm
+
+
+#### Cart Pole
+
+The hidden layer 
