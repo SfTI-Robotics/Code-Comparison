@@ -79,7 +79,7 @@ Has 4 placeholders that will be used later on: inputs, importance sampling weigh
 #### DOOM
 
 ##### Convolutional NN
-So it uses 3 convolutional layers. Each one uses the `conv2d` function to split the frame into parts eg:player, victims etc... 
+So it uses 3 convolutional layers. Each one uses the `conv2d` function to split the frame into parts eg:player, victims etc... https://insiders.liveshare.vsengsaas.visualstudio.com/join?01F3A2AE9F04469D55627BF70C5046B81F12
 Then we use elu network to restrict the data to a range and adds the layers.
 
 #### NN
@@ -104,37 +104,73 @@ def init:
 
 def add: 
 
-add our priority score in the sumtree leaf and experience (S, A, R, S', Done) in data. The `tree index` is the left-most leaf node's index. `data_pointer` is an index for the data array.
+add our priority score in the sumtree leaf and experience (S, A, R, S', Done) in data. The `tree index` is the left-most leaf node's index. `data_pointer` is an index for the data array. 
 
  def update: 
  we update the leaf priority score and propagate through tree. The old priority score is replaced by the new priority score. Then we trace/traverse back along the branch to the upper tiers of the Sum Tree. These nodes are incremented with the difference between the new and old priority score.
  
 A priority score is a value assigned to each node showing that importance of that experience(ie:this action might lead to a very high reward(1,000,000 pts)). How ever each priority also has a probability (ie: the million reward has a 1/1000 chance of getting it).
  
- def get_leaf: retrieve priority score, index and experience associated with a leaf.
+ def get_leaf: 
+
+ retrieve priority score(tree[leaf_index]), index and experience associated with a leaf(data[data_index]). 
+
+_ We are going to use the example that thomas_ _puts in his code for this section where the index and priority score is the same for each node:_
+
+             0  
+            / \
+          1     2
+         / \   / \
+        3   4 5   6  
  
- def total_priority: get the root node value to calculate the total priority score of our replay buffer.
-# 
+ _We will take v=5 and the index we should expect is 5._
+
+ In the while loop, the left child node value is compared to the random value input (`v`). If the value is smaller, the index will be replaced by the left child node index.
+
+ Otherwise, the value is subtracted by the left child node value. The index will also be replaced by the right child node index.
+
+  _Loop 1: Our example starts out with parent_index(p)=0, v =0, then left_child_index(l)=1, right_child_index(r)=2. Since l is less then the length of the tree(number of nodes) which is 7. Then we move on the scond if else statement where the first condition is false and v is bigger than the left child's priority score(5>3) so v is then changed to minus the right child priority score(2) from itself(5-2=3).And the parent index becomes(2)._
+ 
+  Once the index reaches the bottom tier of the tree, the search is ended and the index is assigned to the variable `leaf_index`.
+
+
+  _Loop 2: now our values are v=3, p=2, l=5, r=6. The fist If statement is false so we go to the second if else staement and the first condiotion is true(3<5) so p=5._
+
+_Loop 3: v=3, p=5, l=11, r=12 The first if statement becomes true(11>7) so we have found our leaf index=5 and we break the loop and retur the values_  
+
+ The data array index corresponds to the position where the experience (linked to the leaf nodes) is stored. We have found the leaf node which contains the priority score we want. To find the corresponding experience, we find the position the experience is stored in the data array. The `data_index` is calculated by taking the leaf node index subtracted by the number of leaf nodes (`capacity`) and adding 1. 
+ 
+ def total_priority: 
+ 
+ get the root node value to calculate the total priority score of our replay buffer. 
+
 
 
 ## Memory
 
-We no longer use deques as when it add and removes it changes the indexes for every experiences(not efficient)
+We no longer use deques as when it adds and removes it changes the indexes for every experiences(not efficient)
+ 
 
-### Intialisation
-e,a,b is used for importance sampling see kevins paper
-Its initialised as a sum tree but also an array for our experience 
+def init: 
 
-### Storing
+generates our sumtree and data by instantiating the SumTree object. The parameters `e,a,b` are used for importance sampling. The memory object (`self.tree`) is initialised a sum tree and also a data array for our experiences.
+![alt text](https://cdn-images-1.medium.com/max/1600/0*0qPwzal3qBIP0eFb)
+
+def store: 
+
+we store a new experience in our tree. Each new experience will have priority = max_priority (and then this priority will be corrected during the training (when we'll calculating the TD error hence the priority score). 
+
+The maximum priority score is found from the memory SumTree. A safety precaution is taken when the max priority is found to be 0. Then the max priority is assigned to the inputted experience in the SumTree using the `add` method. 
+
 ```
 max_priority = np.max(self.tree.tree[-self.tree.capacity:])
         
-        # If the max priority = 0 we can't put priority = 0 since this exp will never have a chance to be selected
-        # So we use a minimum priority
-        if max_priority == 0:
-            max_priority = self.absolute_error_upper
-        
-        self.tree.add(max_priority, experience)   # set the max p for new p
+# If the max priority = 0 we can't put priority = 0 since this exp will never have a chance to be selected
+# So we use a minimum priority
+if max_priority == 0:
+    max_priority = self.absolute_error_upper
+
+self.tree.add(max_priority, experience)   # set the max p for new p
 
 ```
 Store memory=ies in tree, looks a t leaves and gets the max. Does this by extracting the tree value data (tree) that is stored in the SumTree (self.tree). #badnaming
@@ -143,6 +179,27 @@ A min priority is needed incase our environment is exatcly how it needs to be(fa
 Updates the tree to add the new expeirnce instead of sum tree. assigns the data (experience) into the date frame. " we store a new experience in our tree. Each new experience will have priority = max_priority (and then this priority will be corrected during the training (when we'll calculating the TD error hence the priority score)."
 
 new experiences are equal to max priority
+
+
+
+def sample:
+
+1. First, to sample a minibatch of k size, the range [0, priority_total] is / into k ranges.   
+The batch size (`n`) is inputted into the function. The batch index (`b_idx`) and Importance Sampling weights (`b_ISWeights`)  variables are initialised as empty arrays. The priority segments (ranges) are found by the total priority divided by the batch size. 
+The importance sampling bias variable (`b`) is incremented when a new minibatch of experience is sampled.
+
+2. Then a value is uniformly sampled from each range
+A for loop is used to iterate through the batch size. From each priority segment (range), a value is randomly sampled between a maximum and minimum (variables `a` and `b`). 
+
+3. We search in the sumtree, the experience where priority score correspond to sample values are retrieved from.
+Using the `get_leaf` function, the sumTree index, priority score, and experience is returned. 
+
+4. Then, we calculate IS weights for each minibatch element
+
+
+def update_batch: 
+
+update the priorities on the tree
 
 
 
