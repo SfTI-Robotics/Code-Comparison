@@ -181,11 +181,11 @@ class QLearning:
          A function that computes the loss between q values (our predictions)
          and the labels (true values)
         Args:
-         logits: the predicted reward for a certain action
+         q_vals: the predicted reward for a certain action
          labels: the actual reward for a certain action
         Returns:
          loss_function: a function that when run computes the loss between
-                        logits and labels
+                        q_vals and labels
         """
         with tf.name_scope('MSE-Loss'):
             loss = tf.reduce_sum(tf.square(labels - q_vals))

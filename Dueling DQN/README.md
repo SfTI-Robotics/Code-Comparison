@@ -100,14 +100,43 @@ Value and Advantage functions both use the hidden layer  by multiplying it with 
 
 In Output layer we use the formula value+(advantage-error) to solve backpropagation
 
-##### Aggrigating Layer
-`self.Q` equations is the aggrigating layer and is used as you simply can't just add them together (duelling system). Instead we use the formula: `Q(s,a) = V(s) + (A(s,a) - 1/|A| * sum A(s,a'))`.
+The placeholders are set up with a lot more abstraction than DOOM, and is spread out in different methods under the `QLearning` class.
+ 
+#### loss
+
+##### DOOM
+
+TD error simply getting the value and returning,these functions show good coding as it breaks it down enough for people unfamiliar with the code to understand and also there's alot of good commenting.
+
+
+##### Cartpole
+
+The code uses a higher level of extraction where the loss function is set up under the Qlearning class bt it essentiallly is the same. target Q-values = `q vals`.
+
+#### fill feed dict 
+##### Cartpole
+
+Overdoing abstraction. A function to take action,rewards and state into a dictionary for processing.
+`labels`=rewards
+
+### Aggregating Layer
+##### DOOM
+
+
+`self.Q` equations is the aggregating layer and is used as you simply can't just add them together (duelling system). Instead we use the formula: `Q(s,a) = V(s) + (A(s,a) - 1/|A| * sum A(s,a'))`.
 
 #### Absolute error
+
+##### DOOM
 ```
 self.absolute_errors = tf.abs(self.target_Q - self.Q)# for updating Sumtree
 ```
 The absolute error is the TD error and is used for Prioritised Experience Replay, not for the duelling DQN. It updates the SumTree which also modifies the loss. 
+
+##### Cartpole
+
+prediction is q value from the behaviour network .Label is q target found using bellman.
+Then find the error between the two.
 
 ## Pretraining
 
@@ -116,7 +145,12 @@ This is done to prepopulate memory with experiences.
 
 ## Action Choosing
 
+### DOOM
 Its called predict_action but that just bad naming.First we randomise a number then we use improved epsilon greedy strategy then use the same exploration/exploitation
+
+### Cartpole
+
+exploitation vs exploration method to find the action based on the target network.
 
 ## Merging Target and behraviour networks
 
@@ -127,6 +161,8 @@ Later it copies values from behav to target so it is our double DQN implementati
 copies all trainable variables of the behavioural network into the target network.
 
 ## Training
+
+### DOOM
 
 - initialise variables, parameters
 - initialise game environment
@@ -161,88 +197,21 @@ copies all trainable variables of the behavioural network into the target networ
     - priority values are updated in the memory Sumtree
     - update target values after 10000 steps using tau variable (fixed q values)
 
+### Cartpole  
+
+#### def Train step
+
+Trains the network
+if a summary object has not been created/running then calculate loss, predictions etc... else if there's a session running then continue feeding the tuples into it.
+
+
 ## playing
 
 The game is played for 10 epsidoes where we don't update the q networks and also don't use expeience replay.
 
-------------------------------------- notes -----------------
-#### Cart Pole
+------------------------------------- notes 
 
 
-
-## Qlearning
-
-### init 
-initialising everything
-predictions-is the q predictioncs
-` self.q_vals = self.q_vals(self.predictions, self.actions_pl)`
-this is simply decalring that q_vals is a function 
-
-## q_vals 
-simply getting the value and returning
-
-## loss
-
-TD error simply getting the value and returning,these functions show good coding as it breaks it down enough for people unfamiliar with the code to understand and also there's alot of good commenting.
-Logits=q vals
-
-## Training
-
-Returning a method for training the network using an optimiser and mininmising the loss.
-global step counter is updated
-
-### fill feed dict 
-Overdoing abstraction
-A function to take action,rewards and state into a dictionary for processing.
-labels=rewards
-
-### Train step
-Traing the network
-if a summary object has not been created/running then calculate loss, predictions etc... else if there's a session running then continue feeding the tuples into it.
-
-### predict
-
-
-### save_Tranisition
-
-Putting tuples into the dictionary and adding it into its replay memory
-
-# transition
-save transition into a usable format in your replay buffer
-
-### Select action
-exploitation vs exploration= target prediction
-predictions= values use max q ro get action
-
-### train with batch
-
-fixed q target so the behav network becomes the targte network blah blah
-select batch of experiences for experience replay
-Labels is used throughout the code to represent different things in this function it represents the q vqlue this is a good example of BAD NAMING.
-
-
-### calcError
-
-prediction is q behaviour 
-
-label is q target found using bellman
-
-then find thge error between the two
-
-
-
-
-
-
-
-
-## replay Memoy
-### Add
-`(error + MEMORY_BIAS)`is just the priority(pt) where as the priority variable is a probability of that priority
-
-
-### sample
-create segments and randomly select a sample to append using   `get` function from SumTree
 
 ## Main
 ```

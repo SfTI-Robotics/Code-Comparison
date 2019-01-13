@@ -281,16 +281,7 @@ class DDDQNNet:
             
             self.flatten = tf.layers.flatten(self.conv3_out)
             
-            
-            ## Here we separate into two streams
-            # The one that calculate V(s)
-            self.value_fc = tf.layers.dense(inputs = self.flatten,
-                                  units = 512,
-                                  activation = tf.nn.elu,
-                                       kernel_initializer=tf.contrib.layers.xavier_initializer(),
-                                name="value_fc")
-            
-            self.value = tf.layers.dense(inputs = self.value_fc,
+            ue = tf.layers.dense(inputs = self.value_fc,
                                         units = 1,
                                         activation = None,
                                         kernel_initializer=tf.contrib.layers.xavier_initializer(),

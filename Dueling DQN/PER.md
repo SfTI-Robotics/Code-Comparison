@@ -100,6 +100,8 @@ The maximum priority score is found from the memory SumTree. A safety precaution
 
 ### def  sample:
 
+#### DOOM
+
 1. First, to sample a minibatch of k size, the range [0, priority_total] is / into k ranges.   
 The batch size (`n`) is inputted into the function. The batch index (`b_idx`) and Importance Sampling weights (`b_ISWeights`)  variables are initialised as empty arrays. Then we split the experiences into n range. The priority segments (ranges) are found by the total priority divided by the batch size. The importance sampling bias variable (`b`) is incremented when a new minibatch of experience is sampled.
 
@@ -123,6 +125,40 @@ b_ISWeights[i, 0] = np.power(n * sampling_probabilities, -self.PER_b)/ max_weigh
 ```
 ![alt text](https://cdn-images-1.medium.com/max/1400/0*Lf3KBrOdyBYcOVqB)
 
+#### Cart pole
+
+```
+segment = self.tree.total() / BATCH_SIZE
+for i in range(BATCH_SIZE):
+    minimum = segment * i
+    maximum = segment * (i+1)
+    s = random.uniform(minimum, maximum)
+    (idx, p, data) = self.tree.get(s)
+    batch.append((idx, data))
+return batch
+```
+
+The priority segment (ranges) is calculated by dividing the total priority by 10 (batch size). Using a for loop, we iterate throught the 10 ranges and randomly select a value (`s`) within the upper and lower bounds of each range. 
+
 ### def  update_batch: 
 
 Update the priorities on the tree. The first line is the same as the priority value equation mentioned before but then it makes sure abs errors is within bounds.Then we add a randomness factor to choosing the priority score by making it to the power of parameter a(0.6) This allows us to also choose some more random samples instead of just high priority scores(as they may not be the best options to take). Update Sumtree priority by using the `update` function. 
+
+--------------------------------------------
+## Cart pole
+
+## Sumtrees
+
+## replay Memoy
+### Add
+`(error + MEMORY_BIAS)`is just the priority(pt) where as the priority variable is a probability of that priority
+
+
+### sample
+create segments and randomly select a sample to append using   `get` function from SumTree
+
+### def train with batch
+
+The target network is updated when after 50 episodes (fixed q target) using the `q_net.copy_to` function. We select a batch of experiences for experience replay. Since the SumTree object is created in a separate python file and imported, its functions are inherited. 
+`Labels` is used throughout the code to represent different things in this function it represents the q vqlue this is a good example of BAD NAMING.
+
