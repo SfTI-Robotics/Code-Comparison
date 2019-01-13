@@ -77,7 +77,7 @@ class DNN:
 #-------------------------------------------------------------------------------
             with tf.name_scope("Output"):
                 out = tf.add(value, tf.subtract(advantage,
-                tf.reduce_mean(advantage, axis=1, keepdims=True)))
+                        tf.reduce_mean(advantage, axis=1, keepdims=True)))
                 tf.summary.histogram('Output', out)
             return out
 

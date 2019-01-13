@@ -99,11 +99,9 @@ value layers only have num of states to 1 as each state can only have one value 
 
 Value and Advantage functions both use the hidden layer  by multiplying it with their respective weights and adding on their respective biases.
 
-In Output layer we use the formula value+(advantage-error) to solve backpropagation
-
 The placeholders are set up with a lot more abstraction than DOOM, and is spread out in different methods under the `QLearning` class.
  
-#### loss
+#### Loss
 
 ##### DOOM
 
@@ -123,10 +121,16 @@ Overdoing abstraction. A function to take action,rewards and state into a dictio
 ### Aggregating Layer
 ##### DOOM
 
-
 `self.Q` equations is the aggregating layer and is used as you simply can't just add them together (duelling system). Instead we use the formula: `Q(s,a) = V(s) + (A(s,a) - 1/|A| * sum A(s,a'))`.
 
-#### Absolute error
+##### Cart pole
+```
+out = tf.add(value, tf.subtract(advantage,
+       tf.reduce_mean(advantage, axis=1, keepdims=True)))
+```
+The aggregating layer finds the `Q(s,a)` is same way as above.
+
+### Absolute error
 
 ##### DOOM
 ```
@@ -139,31 +143,31 @@ The absolute error is the TD error and is used for Prioritised Experience Replay
 prediction is q value from the behaviour network .Label is q target found using bellman.
 Then find the error between the two.
 
-## Pretraining
+### Pretraining (DOOM)
 
 This is done to prepopulate memory with experiences.
 
 
-## Action Choosing
+### Action Choosing
 
-### DOOM
+#### DOOM
 Its called predict_action but that just bad naming.First we randomise a number then we use improved epsilon greedy strategy then use the same exploration/exploitation
 
-### Cartpole
+#### Cartpole
 
 exploitation vs exploration method to find the action based on the target network.
 
-## Merging Target and behraviour networks
+### Merging (updating) Target and behaviour networks
 
-### DOOM
+#### DOOM
 Later it copies values from behav to target so it is our double DQN implementation. This function is simply initialising the parameters, this can also be done in the constuctor/init function.
 
 #### Cartpole
 copies all trainable variables of the behavioural network into the target network.
 
-## Training
+### Training
 
-### DOOM
+#### DOOM
 
 - initialise variables, parameters
 - initialise game environment
@@ -198,18 +202,18 @@ copies all trainable variables of the behavioural network into the target networ
     - priority values are updated in the memory Sumtree
     - update target values after 10000 steps using tau variable (fixed q values)
 
-### Cartpole  
+#### Cartpole  
 
-#### def Train step
+##### def Train step
 
 Trains the network
 if a summary object has not been created/running then calculate loss, predictions etc... else if there's a session running then continue feeding the tuples into it.
 
-#### def train with batch
+##### def train with batch
 
 The target network is updated when after 50 episodes (fixed q target) using the `q_net.copy_to` function. We select a batch of experiences for experience replay. Since the SumTree object is created in a separate python file and imported, its functions are inherited. 
 `Labels` is used throughout the code to represent different things in this function it represents the q vqlue this is a good example of BAD NAMING.
 
-## Playing
-### DOOM
+### Playing (DOOM)
+
 The game is played for 10 epsidoes where we don't update the q networks and also don't use expeience replay.
