@@ -5,6 +5,7 @@ Cart Pole | [Code]()
 Doom [Article](https://medium.freecodecamp.org/improvements-in-deep-q-learning-dueling-double-dqn-prioritized-experience-replay-and-fixed-58b130cc5682)
  | [Code](https://gist.github.com/simoninithomas/d6adc6edb0a7f37d6323a5e3d2ab72ec#file-dueling-deep-q-learning-with-doom-double-dqns-and-prioritized-experience-replay-ipynb)
 
+See [Prioritised Experience Replay markdown](./PER.md)
 
 ## Overall differences
 
@@ -204,30 +205,11 @@ copies all trainable variables of the behavioural network into the target networ
 Trains the network
 if a summary object has not been created/running then calculate loss, predictions etc... else if there's a session running then continue feeding the tuples into it.
 
+#### def train with batch
 
-## playing
+The target network is updated when after 50 episodes (fixed q target) using the `q_net.copy_to` function. We select a batch of experiences for experience replay. Since the SumTree object is created in a separate python file and imported, its functions are inherited. 
+`Labels` is used throughout the code to represent different things in this function it represents the q vqlue this is a good example of BAD NAMING.
 
+## Playing
+### DOOM
 The game is played for 10 epsidoes where we don't update the q networks and also don't use expeience replay.
-
-------------------------------------- notes 
-
-
-
-## Main
-```
-if np.mean(last_100) >= 195:
-                gym.upload('/tmp/cartpole-experiment-1',
-                    api_key=sys.argv[1])
-                exit()
-
-```
-If it succesfully completes the episode in the last 100 tries then it ends the algorithm
-
-
-----------------------------------------
-
-The hidden layer 
-
-
-
-**** See [Prioritised Experience Replay markdown] ()

@@ -10,7 +10,6 @@ Doom [Article](https://medium.freecodecamp.org/improvements-in-deep-q-learning-d
 
 Really important to use PER when using double and duelling since we can't just use a replay buffer. We don't choose experiences randomly but rather select them based on priorisation.
 
-## DOOM
 
 ## Sumtrees
 Binary Trees which have a property that the children nodes have to add to form the parent node. They store the priority values of the experience transitions. Leaf Nodes are special nodes, that are at the bottom tier of tree.
@@ -19,16 +18,28 @@ Binary Trees which have a property that the children nodes have to add to form t
 
  Initialize our SumTree data object with all nodes = 0 and data (data array) with all = 0. The tree capacity ( = number of nodes) is calculated by taking the leaf node number (`capacity`) multiplied by 2 and subtract 1. `Data` array store experience of leaf nodes.
 
+
 ### def  add: 
+#### DOOM
 
 add our priority score in the sumtree leaf and experience (S, A, R, S', Done) in data. The `tree index` is the left-most leaf node's index. `data_pointer` is an index for the data array. 
 
- ### def  update: 
+#### Cartpole
+
+The tree index is found the same way with `write` being equivalent to `data_pointer` from above. The rest is exactly the same as DOOM.
+
+### def  update: 
+#### DOOM
+
  we update the leaf priority score and propagate through tree. The old priority score is replaced by the new priority score. Then we trace/traverse back along the branch to the upper tiers of the Sum Tree. These nodes are incremented with the difference between the new and old priority score.
  
 A priority score is a value assigned to each node showing that importance of that experience(ie:this action might lead to a very high reward(1,000,000 pts)). How ever each priority also has a probability (ie: the million reward has a 1/1000 chance of getting it).
- 
- ### def  get_leaf: 
+
+#### Cartpole
+The old priority is replaced by the new priority score. Using the `_propagate` function, the nodes on the same branch are updated using the `change` incremental value.The `_propagate` function calls itself (recursion) until the top-most node of the tree is reached. This back-propagation method makes the code very neat. 
+
+### def  get_leaf: 
+#### DOOM
 
  retrieve priority score(tree[leaf_index]), index and experience associated with a leaf(data[data_index]). 
 
@@ -55,20 +66,28 @@ _ We are going to use the example that thomas_ _puts in his code for this sectio
 
 _Loop 3: v=3, p=5, l=11, r=12 The first if statement becomes true(11>7) so we have found our leaf index=5 and we break the loop and retur the values_  
 
- The data array index corresponds to the position where the experience (linked to the leaf nodes) is stored. We have found the leaf node which contains the priority score we want. To find the corresponding experience, we find the position the experience is stored in the data array. The `data_index` is calculated by taking the leaf node index subtracted by the number of leaf nodes (`capacity`) and adding 1. 
- 
- ### def  total_priority: 
- 
- get the root node value to calculate the total priority score of our replay buffer. 
+ The data array index corresponds to the position where the experience (linked to the leaf nodes) is stored. We have found the leaf node which contains the priority score we want. To find the corresponding experience, we find the position the experience is stored in the data array. The `data_index` is calculated by taking the leaf node index subtracted by the number of leaf nodes (`capacity`) and adding 1.
 
+ #### Cartpole 
+
+ The `_retrieve` function finds the node index which contains the random `s` value in a recursive manner. The data index (experience index) is calculated the same as above. 
+ 
+### def  total_priority:
+
+ 
+ get the root node value to calculate the total priority score of our replay buffer.
 
 
 ## Memory
+#### DOOM
 
 We no longer use deques as when it adds and removes it changes the indexes for every experiences(not efficient)
+
+#### Cartpole
  
 
 ### def  init: 
+#### DOOM
 
 generates our sumtree and data by instantiating the SumTree object. The parameters `e,a,b` are used for importance sampling. The memory object (`self.tree`) is initialised a sum tree and also a data array for our experiences. 
 
@@ -81,9 +100,11 @@ Lastly in b represents beta in the importance sampling equation
 
 ![alt text](https://cdn-images-1.medium.com/max/1400/0*Lf3KBrOdyBYcOVqB)
 
+#### Cartpole
+Its pretty much the same except the parameters are done above
 
 ### def  store: 
-
+#### DOOM
 we store a new experience in our tree. Each new experience will have priority = max_priority (and then this priority will be corrected during the training (when we'll calculating the TD error hence the priority score). 
 
 ```
@@ -97,6 +118,14 @@ if max_priority == 0:
 self.tree.add(max_priority, experience)   # set the max p for new p
 ```
 The maximum priority score is found from the memory SumTree. A safety precaution is taken when the max priority is found to be 0. A min priority is needed for this. Then the max priority is assigned to the inputted experience in the SumTree using the `add` method. 
+
+#### Cart pole
+The main difference between the two is that doom finds the max priority and stores that whereas in cartpole they don't need to as they calculate the priority differently in doom the calculations are more broken up.
+
+```
+priority = (error + MEMORY_BIAS) ** MEMORY_POW
+self.tree.add(priority, sample)
+```
 
 ### def  sample:
 
@@ -138,27 +167,28 @@ for i in range(BATCH_SIZE):
 return batch
 ```
 
-The priority segment (ranges) is calculated by dividing the total priority by 10 (batch size). Using a for loop, we iterate throught the 10 ranges and randomly select a value (`s`) within the upper and lower bounds of each range. 
+The priority segment (ranges) is calculated by dividing the total priority by 10 (batch size). Using a for loop, we iterate throught the 10 ranges and randomly select a value (`s`) within the upper and lower bounds of each range. From the `SumTree` class, the `get` function returns the index, priority and experience of the corresponding value. The experience is then stored in the `batch` array. Does not use Importance Sampling weights. 
 
-### def  update_batch: 
 
+### def update_batch: 
+
+#### DOOM
+
+```
+abs_errors += self.PER_e  # convert to abs and avoid 0
+clipped_errors = np.minimum(abs_errors, self.absolute_error_upper)
+# priority score
+ps = np.power(clipped_errors, self.PER_a)
+
+for ti, p in zip(tree_idx, ps):
+    self.tree.update(ti, p)
+```
 Update the priorities on the tree. The first line is the same as the priority value equation mentioned before but then it makes sure abs errors is within bounds.Then we add a randomness factor to choosing the priority score by making it to the power of parameter a(0.6) This allows us to also choose some more random samples instead of just high priority scores(as they may not be the best options to take). Update Sumtree priority by using the `update` function. 
 
---------------------------------------------
-## Cart pole
-
-## Sumtrees
-
-## replay Memoy
-### Add
-`(error + MEMORY_BIAS)`is just the priority(pt) where as the priority variable is a probability of that priority
-
-
-### sample
-create segments and randomly select a sample to append using   `get` function from SumTree
-
-### def train with batch
-
-The target network is updated when after 50 episodes (fixed q target) using the `q_net.copy_to` function. We select a batch of experiences for experience replay. Since the SumTree object is created in a separate python file and imported, its functions are inherited. 
-`Labels` is used throughout the code to represent different things in this function it represents the q vqlue this is a good example of BAD NAMING.
+#### Cart pole
+```
+priority = (error + MEMORY_BIAS) ** MEMORY_POW
+self.tree.update(idx, priority)
+```
+This priority score calculation is simpler because he doesnt use importance sampling weights. The same `update` function is used for the SumTree.
 

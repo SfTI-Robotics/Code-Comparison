@@ -441,6 +441,7 @@ def run():
                 gym.upload('/tmp/cartpole-experiment-1',
                     api_key=sys.argv[1])
                 exit()
+        # if it successfully completes the episode the last 100 tries then it exists the algorithm
         dqn.reward = episode_reward
         dqn.train_with_batch(summary=True)
 
