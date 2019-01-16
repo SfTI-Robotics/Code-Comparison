@@ -6,25 +6,6 @@ Pendulum | [Code](https://github.com/MorvanZhou/Reinforcement-learning-with-tens
 
 
 ## Overall differences
-2 types
-1)
-
-behavioural network -> behaviour(action) then sends to target
-target chooses q value and runs a policy on i, and chooses policy
-2)
-another network with different parameter set
-fixed q value determines using para and updates network using that 
-
-q 
-
-b-choose action
- - determine q network
-t- chooses optimal policy
-
-fixed 
-
-
-
 
 ### Diff 1 : Keras vs Tensorflow
 Using Keras simplifies the computation set up process the Keras functions combine multiple Tensorflow functions into one. 
