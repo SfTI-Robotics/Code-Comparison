@@ -82,7 +82,9 @@ def main():
     steps = []
     for trial in range(trials):
         cur_state = env.reset().reshape(1,2)
+        
         for step in range(trial_len):
+            env.render() 
             action = dqn_agent.act(cur_state)
             new_state, reward, done, _ = env.step(action)
 
@@ -98,11 +100,11 @@ def main():
                 break
         if step >= 199:
             print("Failed to complete in trial {}".format(trial))
-            if step % 10 == 0:
-                dqn_agent.save_model("trial-{}.model".format(trial))
+            # if step % 10 == 0:
+            #     dqn_agent.save_model("trial-{}.model".format(trial))
         else:
             print("Completed in {} trials".format(trial))
-            dqn_agent.save_model("success.model")
+            # dqn_agent.save_model("success.model")
             break
 
 if __name__ == "__main__":
