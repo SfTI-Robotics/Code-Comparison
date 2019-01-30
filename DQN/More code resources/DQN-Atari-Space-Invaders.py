@@ -9,7 +9,7 @@
 import tensorflow as tf      # Deep Learning library
 import numpy as np           # Handle matrices
 import retro                 # Retro Environment
-
+import gym
 
 from skimage import transform # Help us to preprocess the frames
 from skimage.color import rgb2gray # Help us to gray our frames
@@ -32,6 +32,7 @@ warnings.filterwarnings('ignore')
 # 
 # Create our environment
 env = retro.make(game='SpaceInvaders-Atari2600')
+
 
 print("The size of our frame is: ", env.observation_space)
 print("The action size is : ", env.action_space.n)

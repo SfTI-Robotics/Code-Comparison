@@ -138,6 +138,14 @@ class DoubleDQNAgent:
         self.model.fit(update_input, target, batch_size=self.batch_size,
                        epochs=1, verbose=0)
 
+tf.summary.scalar("Loss", DQNetwork.loss)
+
+write_op = tf.summary.merge_all()
+
+
+# ## Step 8: Train our Agent 🏃‍♂️
+# 
+# Our algorithm:
 
 if __name__ == "__main__":
     # In case of CartPole-v1, you can play until 500 time step
