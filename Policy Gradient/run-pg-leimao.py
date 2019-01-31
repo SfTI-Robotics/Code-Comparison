@@ -6,6 +6,8 @@ import argparse
 import numpy as np
 from pg_leimao_tf import OpenAI_REINFORCE_FC
 
+
+# f 
 ENV_NAME = 'LunarLander-v2' # name of the environment
 RENDER = False # show game
 RAND_SEED = 0 # random seed for generating psudorandom numbers
