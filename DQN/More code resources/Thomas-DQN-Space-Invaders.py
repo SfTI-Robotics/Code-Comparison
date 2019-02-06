@@ -1,15 +1,43 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 # # Deep Q Learning with Atari© Space Invaders© 🕹️👾
+ 
+# In this notebook we'll implement an agent **that learns to play Atari© Space Invaders© using OpenAI retro as environment library.**
+# 
+# Our agent after 2 hours of training (as you can see it needs much more, but **for educational purposes we can see that's a good beginning**)
+# 
+# <img src="https://raw.githubusercontent.com/simoninithomas/Deep_reinforcement_learning_Course/master/Deep%20Q%20Learning/Space%20Invaders/assets/spaceinvaders.gif" alt="Space invaders dqn"/>
+# 
+# 
+ 
+# # This is a notebook from [Deep Reinforcement Learning Course with Tensorflow](https://simoninithomas.github.io/Deep_reinforcement_learning_Course/)
+# <img src="https://raw.githubusercontent.com/simoninithomas/Deep_reinforcement_learning_Course/master/docs/assets/img/DRLC%20Environments.png" alt="Deep Reinforcement Course"/>
+# <br>
+# <p>  Deep Reinforcement Learning Course is a free series of articles and videos tutorials 🆕 about Deep Reinforcement Learning, where **we'll learn the main algorithms (Q-learning, Deep Q Nets, Dueling Deep Q Nets, Policy Gradients, A2C, Proximal Policy Gradients…), and how to implement them with Tensorflow.**
+# <br><br>
+#     
+# 📜The articles explain the architectures from the big picture to the mathematical details behind them.
+# <br>
+# 📹 The videos explain how to build the agents with Tensorflow </b></p>
+# <br>
+# This course will give you a **solid foundation for understanding and implementing the future state of the art algorithms**. And, you'll build a strong professional portfolio by creating **agents that learn to play awesome environments**: Doom© 👹, Space invaders 👾, Outrun, Sonic the Hedgehog©, Michael Jackson’s Moonwalker, agents that will be able to navigate in 3D environments with DeepMindLab (Quake) and able to walk with Mujoco. 
+# <br><br>
+# </p> 
+# 
+# ## 📚 The complete [Syllabus HERE](https://simoninithomas.github.io/Deep_reinforcement_learning_Course/)
+# 
+# 
+# ## Any questions 👨‍💻
+# <p> If you have any questions, feel free to ask me: </p>
+# <p> 📧: <a href="mailto:hello@simoninithomas.com">hello@simoninithomas.com</a>  </p>
+# <p> Github: https://github.com/simoninithomas/Deep_reinforcement_learning_Course </p>
 
-
+ 
 # ## Step 1: Import the libraries 📚
 
+  
 import tensorflow as tf      # Deep Learning library
 import numpy as np           # Handle matrices
 import retro                 # Retro Environment
-import gym
+
 
 from skimage import transform # Help us to preprocess the frames
 from skimage.color import rgb2gray # Help us to gray our frames
@@ -23,16 +51,19 @@ import random
 import warnings # This ignore all the warning messages that are normally printed during the training because of skiimage
 warnings.filterwarnings('ignore') 
 
-
+ 
 # ## Step 2: Create our environment 🎮
 # This time we use **OpenAI Retro**, a wrapper for video game emulator cores using the Libretro API to turn them into Gym environments.
-
+# 
+# <img src="http://cdn-static.denofgeek.com/sites/denofgeek/files/styles/main_wide/public/mega-drive-main.jpg?itok=aj_clOZT" style="max-width:50%" alt="Sega" /><p><i>Source: Denofgeek </i></p>
+ 
 # ### Our environment
 # Our Environment is the famous game Atari Space Invaders.
 # 
+
+  
 # Create our environment
 env = retro.make(game='SpaceInvaders-Atari2600')
-
 
 print("The size of our frame is: ", env.observation_space)
 print("The action size is : ", env.action_space.n)
@@ -41,7 +72,7 @@ print("The action size is : ", env.action_space.n)
 # possible_actions = [[1, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0]...]
 possible_actions = np.array(np.identity(env.action_space.n,dtype=int).tolist())
 
-
+ 
 # ## Step 3 : Define the preprocessing functions ⚙️
 # ### preprocess_frame
 # Preprocessing is an important step, <b>because we want to reduce the complexity of our states to reduce the computation time needed for training.</b>
@@ -52,9 +83,7 @@ possible_actions = np.array(np.identity(env.action_space.n,dtype=int).tolist())
 # - We normalize pixel values
 # - Finally we resize the preprocessed frame
 
-# In[3]:
-
-
+  
 """
     preprocess_frame:
     Take a frame.
@@ -94,8 +123,7 @@ def preprocess_frame(frame):
     preprocessed_frame = transform.resize(normalized_frame, [110,84])
     
     return preprocessed_frame # 110x84x1 frame
-
-
+ 
 # ### stack_frames
 # As explained in this really <a href="https://danieltakeshi.github.io/2016/11/25/frame-skipping-and-preprocessing-for-deep-q-networks-on-atari-2600-games/">  good article </a> we stack frames.
 # 
@@ -116,9 +144,7 @@ def preprocess_frame(frame):
 # <img src="https://raw.githubusercontent.com/simoninithomas/Deep_reinforcement_learning_Course/master/DQN/Space%20Invaders/assets/stack_frames.png" alt="stack">
 # - If we're done, **we create a new stack with 4 new frames (because we are in a new episode)**.
 
-# In[4]:
-
-
+  
 stack_size = 4 # We stack 4 frames
 
 # Initialize deque with zero-images one array for each image
@@ -150,16 +176,14 @@ def stack_frames(stacked_frames, state, is_new_episode):
     
     return stacked_state, stacked_frames
 
-
+ 
 # ## Step 4: Set up our hyperparameters ⚗️
 # In this part we'll set up our different hyperparameters. But when you implement a Neural Network by yourself you will **not implement hyperparamaters at once but progressively**.
 # 
 # - First, you begin by defining the neural networks hyperparameters when you implement the model.
 # - Then, you'll add the training hyperparameters when you implement the training algorithm.
 
-# In[5]:
-
-
+  
 ### MODEL HYPERPARAMETERS
 state_size = [110, 84, 4]      # Our input is a stack of 4 frames hence 110x84x4 (Width, height, channels) 
 action_size = env.action_space.n # 8 possible actions
@@ -191,7 +215,7 @@ training = False
 ## TURN THIS TO TRUE IF YOU WANT TO RENDER THE ENVIRONMENT
 episode_render = False
 
-
+ 
 # ## Step 5: Create our Deep Q-learning Neural Network model 🧠
 # <img src="https://raw.githubusercontent.com/simoninithomas/Deep_reinforcement_learning_Course/master/DQN/Space%20Invaders/assets/DQN%20Illustrations.png" alt="Model" />
 # This is our Deep Q-learning model:
@@ -201,9 +225,7 @@ episode_render = False
 # - Finally it passes through 2 FC layers
 # - It outputs a Q value for each actions
 
-# In[6]:
-
-
+  
 class DQNetwork:
     def __init__(self, state_size, action_size, learning_rate, name='DQNetwork'):
         self.state_size = state_size
@@ -291,25 +313,21 @@ class DQNetwork:
             self.optimizer = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss)
 
 
-# In[7]:
-
-
+  
 # Reset the graph
 tf.reset_default_graph()
 
 # Instantiate the DQNetwork
 DQNetwork = DQNetwork(state_size, action_size, learning_rate)
 
-
+ 
 # ## Step 6: Experience Replay 🔁
 # Now that we create our Neural Network, **we need to implement the Experience Replay method.** <br><br>
 # Here we'll create the Memory object that creates a deque.A deque (double ended queue) is a data type that **removes the oldest element each time that you add a new element.**
 # 
 # This part was taken from Udacity : <a href="https://github.com/udacity/deep-learning/blob/master/reinforcement/Q-learning-cart.ipynb" Cartpole DQN</a>
 
-# In[8]:
-
-
+  
 class Memory():
     def __init__(self, max_size):
         self.buffer = deque(maxlen = max_size)
@@ -325,12 +343,10 @@ class Memory():
         
         return [self.buffer[i] for i in index]
 
-
+ 
 # Here we'll **deal with the empty memory problem**: we pre-populate our memory by taking random actions and storing the experience (state, action, reward, next_state).
 
-# In[9]:
-
-
+  
 # Instantiate memory
 memory = Memory(max_size = memory_size)
 for i in range(pretrain_length):
@@ -372,23 +388,21 @@ for i in range(pretrain_length):
         # Our new state is now the next_state
         state = next_state
 
-
+ 
 # ## Step 7: Set up Tensorboard 📊
 # For more information about tensorboard, please watch this <a href="https://www.youtube.com/embed/eBbEDRsCmv4">excellent 30min tutorial</a> <br><br>
 # To launch tensorboard : `tensorboard --logdir=/tensorboard/dqn/1`
 
-# In[10]:
-
-
+  
 # Setup TensorBoard Writer
-writer = tf.summary.FileWriter("/tensorboard/dqn/1")
+# writer = tf.summary.FileWriter("/tensorboard/dqn/1")
 
 ## Losses
 tf.summary.scalar("Loss", DQNetwork.loss)
 
 write_op = tf.summary.merge_all()
 
-
+ 
 # ## Step 8: Train our Agent 🏃‍♂️
 # 
 # Our algorithm:
@@ -416,6 +430,7 @@ write_op = tf.summary.merge_all()
 # 
 #     
 
+  
 """
 This function will do the part
 With ϵϵ select a random action atat, otherwise select at=argmaxaQ(st,a)
@@ -446,6 +461,8 @@ def predict_action(explore_start, explore_stop, decay_rate, decay_step, state, a
                 
     return action, explore_probability
 
+
+  
 # Saver will help us to save our model
 saver = tf.train.Saver()
 
@@ -556,25 +573,23 @@ if training == True:
                                                    DQNetwork.target_Q: targets_mb,
                                                    DQNetwork.actions_: actions_mb})
 
-                # Write TF Summaries
-                summary = sess.run(write_op, feed_dict={DQNetwork.inputs_: states_mb,
-                                                       DQNetwork.target_Q: targets_mb,
-                                                       DQNetwork.actions_: actions_mb})
-                writer.add_summary(summary, episode)
-                writer.flush()
+                # # Write TF Summaries
+                # summary = sess.run(write_op, feed_dict={DQNetwork.inputs_: states_mb,
+                #                                        DQNetwork.target_Q: targets_mb,
+                #                                        DQNetwork.actions_: actions_mb})
+                # writer.add_summary(summary, episode)
+                # writer.flush()
 
             # Save model every 5 episodes
             if episode % 5 == 0:
                 save_path = saver.save(sess, "./models/model.ckpt")
                 print("Model Saved")
 
-
+ 
 # ## Step 9: Test and Watch our Agent play 👀
 # Now that we trained our agent, we can test it
 
-# In[ ]:
-
-
+  
 with tf.Session() as sess:
     total_test_rewards = []
     
@@ -617,4 +632,5 @@ with tf.Session() as sess:
             state = next_state
             
     env.close()
+
 
