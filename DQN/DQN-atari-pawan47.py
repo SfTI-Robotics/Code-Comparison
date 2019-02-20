@@ -14,6 +14,53 @@ import time
 max_ep=200
 train = True
 
+import argparse
+from argparse import RawTextHelpFormatter
+import sys
+parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
+# parser.add_argument("-alg", "--algorithm", help="select a algorithm: \n QLearning \n DQN \n DoubleDQN \n DuellingDQN \n DDDQN")
+# parser.add_argument("-env","--environment", help="select a environment: \n Pong-v0 \n SpaceInvaders-v0 \n MsPacman-v0")
+parser.add_argument("-eps","--episodes", help="select number of episodes to graph")
+
+# retrieve user inputted args from cmd line
+args = parser.parse_args()
+
+
+# for graphing
+from summary import summary
+import time
+import datetime
+
+# Graphing results
+now = datetime.datetime.now()
+MODEL_FILENAME = 'breakout' + '_' + 'DQN' + '_'
+# our graphing function
+#summary sets the ranges and targets and saves the graph
+graph = summary(summary_types = ['sumiz_step', 'sumiz_time', 'sumiz_reward', 'sumiz_epsilon'],
+            # the optimal step count of the optimal policy
+            step_goal = 0,
+            # the maximum reward for the optimal policy
+            reward_goal = 0,
+            # maximum exploitation value
+            epsilon_goal = 0.99,
+            # desired name for file
+            NAME = MODEL_FILENAME + str(now),
+            # file path to save graph. i.e "/Desktop/Py/Scenario_Comparasion/Maze/Model/"
+            # SAVE_PATH = "/github/Gym-T4-Testbed/Gym-T4-Testbed/temp_Graphs/",
+            SAVE_PATH = "/Code-Comparison/DQN/Graphs/",
+            # episode upper bound for graph
+            EPISODE_MAX = int(args.episodes),
+            # step upper bound for graph
+            STEP_MAX_M = 1000,
+            # time upper bound for graph
+            TIME_MAX_M = 50,
+            # reward upper bound for graph
+            REWARD_MIN_M = 0,
+            # reward lower bound for graph
+            REWARD_MAX_M = 10
+        )
+
+
 
 class dqnagent():
     def __init__(self, lr = 0.00025, ob_size = (84,84,4), action_size = 4, env = 'BreakoutNoFrameskip-v0'):
@@ -116,7 +163,7 @@ env_name = 'BreakoutNoFrameskip-v0'
 batch_size = 32
 count = 0
 brain = dqnagent()
-learning_start = 10000
+learning_start = 400
 st = time.time()
 model_saved = False
 if model_saved == True:
@@ -124,7 +171,7 @@ if model_saved == True:
 update_ = 0
 
 if train == True:
-    for i in range(100000):
+    for episode in range(int(args.episodes)):
         s = brain.env_re()
         s =cv2.resize(cv2.cvtColor(s, cv2.COLOR_BGR2GRAY),(84,84))
         s = np.reshape(s,(1,84,84))
@@ -161,9 +208,13 @@ if train == True:
             if update_ == 4000:
                 update_ = 0
                 brain.update_target_model()
+        
+        # summarize plots the graph
+        graph.summarize(episode, step, time.time() - st, R, 1-brain.ep)
+
 #         if (i+1) % 100 == 0:
 #             brain.model_save()
-        print('episode = ', i, ' reward = ', R, " step = ", step, " epsilon = ", brain.ep )
+        print('episode = ', episode, ' reward = ', R, " step = ", step, " epsilon = ", 1-brain.ep )
 # else:
 #     brain.model.load_weights("model_cart.h5")
 # record = np.array(record)
