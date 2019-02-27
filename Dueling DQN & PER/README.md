@@ -1,6 +1,6 @@
 # Duelling DQN Code Comaprison
 
-Cart Pole | [Code]()
+Cart Pole | [Code](https://github.com/joroGER/ReinforcementLearning/blob/master/DQN/scripts/main.py) 
 
 Doom [Article](https://medium.freecodecamp.org/improvements-in-deep-q-learning-dueling-double-dqn-prioritized-experience-replay-and-fixed-58b130cc5682)
  | [Code](https://gist.github.com/simoninithomas/d6adc6edb0a7f37d6323a5e3d2ab72ec#file-dueling-deep-q-learning-with-doom-double-dqns-and-prioritized-experience-replay-ipynb)
