@@ -1,6 +1,6 @@
 # Prioritised Experience Replay
 
-We use the same code as duelling dqns but split the two methods to show clearly  how tbwy are implemented
+We use the same code as duelling dqns but split the two methods to show clearly  how they are implemented
 
 Cart Pole | [Code]()
 
