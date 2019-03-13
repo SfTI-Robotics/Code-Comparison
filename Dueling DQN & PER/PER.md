@@ -2,7 +2,7 @@
 
 We use the same code as duelling dqns but split the two methods to show clearly  how they are implemented
 
-Cart Pole | [Code]()
+Cart Pole | [Code](https://github.com/UoA-RL/Code-Comparison/blob/cc2934956d0010ccb89acb505eec06743317a2a0/Dueling%20DQN%20%26%20PER/dueling-joroGER.py)
 
 Doom [Article](https://medium.freecodecamp.org/improvements-in-deep-q-learning-dueling-double-dqn-prioritized-experience-replay-and-fixed-58b130cc5682)
  | [Code](https://gist.github.com/simoninithomas/d6adc6edb0a7f37d6323a5e3d2ab72ec#file-dueling-deep-q-learning-with-doom-double-dqns-and-prioritized-experience-replay-ipynb)
